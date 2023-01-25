@@ -240,7 +240,8 @@ public class Grib2Record extends GribRecord
 
         ScanMode scanMode = gds.scanMode;
 
-        if (scanMode.iDirectionEvenRowsOffset || scanMode.iDirectionOddRowsOffset || scanMode.jDirectionOffset || !scanMode.rowsNiNjPoints || scanMode.rowsZigzag)
+        if (scanMode.iDirectionEvenRowsOffset || scanMode.iDirectionOddRowsOffset || scanMode.jDirectionOffset ||
+                !scanMode.rowsNiNjPoints || scanMode.rowsZigzag)
         {
             System.err.println("Unsupported scan mode found");
         }
@@ -259,7 +260,13 @@ public class Grib2Record extends GribRecord
     @Override
     public float[] getValues()
     {
-        return null;
+        if (dsList.size() > 1)
+        {
+            logger.warn("Unsupported Grib2RecordDS count, maximum allowed is 1.");
+            return null;
+        }
+
+        return dsList.get(0).data;
     }
 
     /**

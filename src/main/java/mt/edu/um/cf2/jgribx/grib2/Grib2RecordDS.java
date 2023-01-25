@@ -26,7 +26,8 @@ public class Grib2RecordDS
     protected int length;
     protected float[] data;
 
-    public static Grib2RecordDS readFromStream(GribInputStream in, Grib2RecordDRS drs, Grib2RecordGDS gds, Grib2RecordBMS bms) throws IOException, NotSupportedException, NoValidGribException
+    public static Grib2RecordDS readFromStream(GribInputStream in, Grib2RecordDRS drs, Grib2RecordGDS gds, Grib2RecordBMS bms)
+            throws IOException, NotSupportedException, NoValidGribException
     {
         Grib2RecordDS ds = new Grib2RecordDS();
 
@@ -57,15 +58,15 @@ public class Grib2RecordDS
         // Sanity checking of data
         if (data == null)
         {
-            throw new NotSupportedException("Unpacked data is null");
+            throw new NotSupportedException("Unpacked data is null.");
         }
+
         ds.data = data;
         return ds;
     }
 
-    private static float[] unpackSimplePacking(
-            GribInputStream in, Grib2RecordDRS drs, Grib2RecordGDS gds, Grib2RecordBMS bms
-    ) throws IOException, NotSupportedException
+    private static float[] unpackSimplePacking(GribInputStream in, Grib2RecordDRS drs, Grib2RecordGDS gds, Grib2RecordBMS bms)
+            throws IOException, NotSupportedException
     {
         float ref = (float) (Math.pow(10, -drs.decimalScaleFactor) * drs.refValue);
         float scale = (float) (Math.pow(10, -drs.decimalScaleFactor) * Math.pow(2, drs.binaryScaleFactor));
