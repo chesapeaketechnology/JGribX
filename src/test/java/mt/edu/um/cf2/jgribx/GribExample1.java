@@ -4,7 +4,7 @@
  * ============================================================================
  * Written by Andrew Spiteri <andrew.spiteri@um.edu.mt>
  * Adapted from JGRIB: http://jgrib.sourceforge.net/
- * 
+ *
  * Licensed under MIT: https://github.com/spidru/JGribX/blob/master/LICENSE
  * ============================================================================
  */
@@ -12,17 +12,10 @@ package mt.edu.um.cf2.jgribx;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
-import mt.edu.um.cf2.jgribx.GribCodes;
-import mt.edu.um.cf2.jgribx.GribFile;
-import mt.edu.um.cf2.jgribx.JGribX;
-import mt.edu.um.cf2.jgribx.Logger;
-import mt.edu.um.cf2.jgribx.NoValidGribException;
-import mt.edu.um.cf2.jgribx.NotSupportedException;
 
 /**
  * This example demonstrates how a quick summary of the contents of the GRIB
@@ -35,7 +28,7 @@ public class GribExample1
         System.out.println("JGribX version " + JGribX.getVersion());
         Logger.setLoggingMode(Logger.LoggingMode.CONSOLE);
         Logger.setLevel(Logger.INFO);
-        
+
         /**
          * type: GRIB1 NCEP GFS
          * issues:
@@ -63,9 +56,9 @@ public class GribExample1
          *  - second surface not yet supported
          */
 //        String gribFilename = "test/gfsanl_3_20170512_0000_000.grb2";
-        
+
 //        String gribFilename = "test/200601010000.pgbh06.gdas.20051226-20051231.grb2";
-        
+
         /**
          * type: GRIB2 NCEP GFS
          * issues:
@@ -76,7 +69,7 @@ public class GribExample1
 //        String gribFilename = "test/gfs_4_20171112_0000_024.grb2";
 
 //        String gribFilename = "test/A_HWXE85ECEM210000_C_ECMF_20160721000000_24h_em_ws_850hPa_global_0p5deg_grib2.bin";     // testing files from ECMWF 
-        
+
 //        String gribFilename = "cached_gfs_4_20180520_0000_000_m.grb2";
         final String gribFilename = "gfsanl_3_20170512_0000_000.grb2";
 
@@ -84,12 +77,12 @@ public class GribExample1
 //        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss 'UTC'");
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-        
+
         try
         {
 //            System.out.println(GribExample1.class.getClassLoader().getResource(gribFilename));
             GribFile gribFile = new GribFile("src/test/resources/" + gribFilename);
-            
+
             // Get info
             int nRecords = gribFile.getRecordCount();
             List<Calendar> refDates = gribFile.getReferenceTimes();
@@ -97,7 +90,7 @@ public class GribExample1
             List<String> params = gribFile.getParameterCodes();
             int[] centreIds = gribFile.getCentreIDs();
             int[] processIds = gribFile.getProcessIDs();
-            
+
             // Print out generic GRIB file info
             System.out.println("---------------------------------------");
             System.out.println("Reading file: " + gribFilename);
@@ -105,7 +98,7 @@ public class GribExample1
             System.out.println("Records successfully read: " + nRecords + " of "
                     + (nRecords + gribFile.getRecordsSkippedCount()));
             System.out.println("---------------------------------------");
-            
+
             // Print out originating centre info
             System.out.print("Weather Centre(s): ");
             for (int i = 0; i < centreIds.length; i++)
@@ -115,7 +108,7 @@ public class GribExample1
                 if (i != centreIds.length - 1) System.out.print(",");
             }
             System.out.println();
-            
+
             // Print out generating process info
             System.out.print("Generating Process(es): ");
             for (int i = 0; i < processIds.length; i++)
@@ -125,21 +118,21 @@ public class GribExample1
                 if (i != processIds.length - 1) System.out.print(",");
             }
             System.out.println();
-            
+
             // Get forecast times
             System.out.println("Forecast Time(s): ");
             for (Calendar date : forecastDates)
             {
                 System.out.println("\t" + sdf.format(date.getTime()));
             }
-            
+
             // Get reference time
             System.out.println("Reference Time: ");
             for (Calendar date : refDates)
             {
                 System.out.println("\t" + sdf.format(date.getTime()));
             }
-            
+
             System.out.println("Data: ");
             for (String paramCode : params)
             {
@@ -148,26 +141,23 @@ public class GribExample1
                 for (int i = 0; i < descList.size(); i++)
                 {
                     System.out.print(descList.get(i));
-                    if (i != descList.size()-1)
+                    if (i != descList.size() - 1)
+                    {
                         System.out.print(", ");
+                    }
                 }
                 System.out.println();
             }
-            
-        }
-        catch (FileNotFoundException e)
+        } catch (FileNotFoundException e)
         {
             System.err.println("Cannot find file: " + gribFilename);
-        }
-        catch (IOException e)
+        } catch (IOException e)
         {
             System.err.println("Cannot access file: " + gribFilename);
-        }
-        catch (NotSupportedException e)
+        } catch (NotSupportedException e)
         {
             System.err.println("GRIB file contains unsupported features: " + e);
-        }
-        catch (NoValidGribException e)
+        } catch (NoValidGribException e)
         {
             System.err.println("GRIB file is invalid: " + e);
         }

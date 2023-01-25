@@ -4,19 +4,17 @@
  * ============================================================================
  * Written by Andrew Spiteri <andrew.spiteri@um.edu.mt>
  * Adapted from JGRIB: http://jgrib.sourceforge.net/
- * 
+ *
  * Licensed under MIT: https://github.com/spidru/JGribX/blob/master/LICENSE
  * ============================================================================
  */
 
- /*
- * References: 
+/*
+ * References:
  *  http://nimbus.com.uy/weather/grads/grib_levels.html
  *  http://www.nco.ncep.noaa.gov/pmb/docs/on388/table3.html
  */
 package mt.edu.um.cf2.jgribx.grib1;
-
-import mt.edu.um.cf2.jgribx.Logger;
 
 /**
  * A class containing static methods which deliver descriptions and names of
@@ -25,11 +23,12 @@ import mt.edu.um.cf2.jgribx.Logger;
  * <b>2006-07-26 frv_peg: Added NCEP extention levels for use of GFS
  * files.</b><p/>
  * (level: 117, 211,212,213,222,223,232,233,242,243,244)</p>
- *
+ * <p>
  * See:
  * <a href="http://www.nco.ncep.noaa.gov/pmb/docs/on388/table3.html">table3.html</a>
  */
-public class Grib1Level {
+public class Grib1Level
+{
 
     /**
      * Index number from table 3 - can be used for comparison even if the
@@ -39,7 +38,6 @@ public class Grib1Level {
 
     /**
      * Name of the vertical coordinate/level
-     *
      */
     private String name;
 
@@ -93,18 +91,20 @@ public class Grib1Level {
     /**
      * Constructor. Creates a GribPDSLevel based on octets 10-12 of the PDS.
      * Implements tables 3 and 3a.
-     *
      */
-    public Grib1Level() {
+    public Grib1Level()
+    {
         this.units = "";
     }
 
-    public static Grib1Level getLevel(int levelType, int levelData) {
+    public static Grib1Level getLevel(int levelType, int levelData)
+    {
         Grib1Level level = new Grib1Level();
         int v1 = (levelData & 0xFF00) >> 8;
         int v2 = levelData & 0xFF;
         level.index = levelType;
-        switch (level.index) {
+        switch (level.index)
+        {
             case 1:
                 level.code = "SFC";
                 level.name = level.description = "ground or water surface";
@@ -409,37 +409,40 @@ public class Grib1Level {
     /**
      * @return true if negative z-value
      */
-    public boolean isDepth() {
+    public boolean isDepth()
+    {
         return index == 111 || index == 160;
     }
 
     /**
      * @return Index
      */
-    public int getIndex() {
+    public int getIndex()
+    {
         return index;
     }
 
     /**
      * @return Name
      */
-    public String getName() {
+    public String getName()
+    {
         return name;
     }
 
     /**
-     *
      * @return Level
      */
-    public String getCode() {
+    public String getCode()
+    {
         return code;
     }
 
     /**
-     *
      * @return Description
      */
-    public String getDescription() {
+    public String getDescription()
+    {
         return description;
     }
 
@@ -448,70 +451,75 @@ public class Grib1Level {
      *
      * @return
      */
-    public String getIdentifier() {
+    public String getIdentifier()
+    {
         String id = code;
-        if (Float.isNaN(value1)) {
+        if (Float.isNaN(value1))
+        {
             return id;
         }
         id += ":";
-        if (value1 % 1 == 0) {
+        if (value1 % 1 == 0)
+        {
             id += (int) value1;
-        } else {
+        } else
+        {
             id += value1;
         }
         return id;
     }
 
     /**
-     *
      * @return Unit
      */
-    public String getUnits() {
+    public String getUnits()
+    {
         return units;
     }
 
-    public float[] getValues() {
+    public float[] getValues()
+    {
         float[] values = {value1, value2};
         return values;
     }
 
     /**
-     *
      * @return Value1
      */
-    public float getValue1() {
+    public float getValue1()
+    {
         return value1;
     }
 
     /**
-     *
      * @return Value2
      */
-    public float getValue2() {
+    public float getValue2()
+    {
         return value2;
     }
 
     /**
-     *
      * @return true/false if numeric
      */
-    public boolean getIsNumeric() {
+    public boolean getIsNumeric()
+    {
         return isNumeric;
     }
 
     /**
-     *
      * @return true/false if increasing up
      */
-    public boolean getIsIncreasingUp() {
+    public boolean getIsIncreasingUp()
+    {
         return isIncreasingUp;
     }
 
     /**
-     *
      * @return true/false, if is 2D variable
      */
-    public boolean getIsSingleLayer() {
+    public boolean getIsSingleLayer()
+    {
         return isSingleLayer;
     }
 
@@ -521,7 +529,8 @@ public class Grib1Level {
      * @return String holding description of the object parameters
      * @see java.lang.Object#toString()
      */
-    public String toString() {
+    public String toString()
+    {
         return "Level description:" + '\n'
                 + "        \tparameter id: " + this.index + "\n"
                 + "        \tname: " + this.name + "\n"
@@ -542,28 +551,29 @@ public class Grib1Level {
      * @return true/false depends upon succes
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Grib1Level)) {
+    public boolean equals(Object obj)
+    {
+        if (!(obj instanceof Grib1Level))
+        {
             return false;
         }
 
         // quick check to see if same object
-        if (this == obj) {
+        if (this == obj)
+        {
             return true;
         }
 
         Grib1Level lvl = (Grib1Level) obj;
-        if (index != lvl.getIndex()) {
+        if (index != lvl.getIndex())
+        {
             return false;
         }
-        if (value1 != lvl.getValue1()) {
+        if (value1 != lvl.getValue1())
+        {
             return false;
         }
-        if (value2 != lvl.getValue2()) {
-            return false;
-        }
-
-        return true;
+        return value2 == lvl.getValue2();
     }
 
     /**
@@ -571,24 +581,27 @@ public class Grib1Level {
      * extracting records.
      *
      * @param level
-     *
      * @return - -1 if level is "less than" this, 0 if equal, 1 if level is
      * "greater than" this.
-     *
      */
-    public int compare(Grib1Level level) {
-        if (this.equals(level)) {
+    public int compare(Grib1Level level)
+    {
+        if (this.equals(level))
+        {
             return 0;
         }
 
         // check if level is less than this
-        if (index > level.getIndex()) {
+        if (index > level.getIndex())
+        {
             return -1;
         }
-        if (value1 > level.getValue1()) {
+        if (value1 > level.getValue1())
+        {
             return -1;
         }
-        if (value2 > level.getValue2()) {
+        if (value2 > level.getValue2())
+        {
             return -1;
         }
 

@@ -4,11 +4,13 @@
  * ============================================================================
  * Written by Andrew Spiteri <andrew.spiteri@um.edu.mt>
  * Adapted from JGRIB: http://jgrib.sourceforge.net/
- * 
+ *
  * Licensed under MIT: https://github.com/spidru/JGribX/blob/master/LICENSE
  * ============================================================================
  */
 package mt.edu.um.cf2.jgribx.grib2;
+
+import mt.edu.um.cf2.jgribx.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,20 +21,18 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import mt.edu.um.cf2.jgribx.Logger;
-
 public class Grib2Parameter
 {
-    private ProductDiscipline discipline;
-    private ParameterCategory category;
-    private int index;
-    private String abbrev;
-    private String desc;
-    private String units;
-    
-    private static List<Grib2Parameter> paramList = new ArrayList();
+    private final ProductDiscipline discipline;
+    private final ParameterCategory category;
+    private final int index;
+    private final String abbrev;
+    private final String desc;
+    private final String units;
+
+    private static final List<Grib2Parameter> paramList = new ArrayList();
     private static boolean defaultLoaded = false;
-    
+
     public Grib2Parameter(ProductDiscipline discipline, ParameterCategory category, int index, String abbrev, String desc, String units)
     {
         this.discipline = discipline;
@@ -42,14 +42,13 @@ public class Grib2Parameter
         this.desc = desc;
         this.units = units;
     }
-    
+
     public static void loadDefaultParameters()
     {
         String filename;
 
         Logger.println("Number of product disciplines: " + ProductDiscipline.getValues().size(), Logger.DEBUG);
 
-        
         for (ProductDiscipline discipline : ProductDiscipline.getValues())
         {
             List<ParameterCategory> categories = discipline.getParameterCategories();
@@ -57,7 +56,7 @@ public class Grib2Parameter
                     Logger.DEBUG);
             for (ParameterCategory category : categories)
             {
-                filename = "/" + discipline + "-" + category.toString() + ".txt";                
+                filename = "/" + discipline + "-" + category.toString() + ".txt";
                 Logger.println("Resource path: " + filename, Logger.INFO);
                 InputStream is = Grib2Parameter.class.getResourceAsStream(filename);
                 if (is == null)
@@ -82,8 +81,7 @@ public class Grib2Parameter
                             paramList.add(new Grib2Parameter(discipline, category, index, paramName, paramDesc, paramUnits));
                         }
                     }
-                }
-                catch (IOException e)
+                } catch (IOException e)
                 {
                     Logger.println("Cannot read " + filename, Logger.ERROR);
                 }
@@ -91,7 +89,7 @@ public class Grib2Parameter
         }
         defaultLoaded = true;
     }
-    
+
     public static Grib2Parameter getParameter(ProductDiscipline discipline, int category, int index)
     {
         for (Grib2Parameter parameter : paramList)
@@ -99,29 +97,29 @@ public class Grib2Parameter
             if ((parameter.discipline.equals(discipline)) &&
                     (parameter.category.getValue() == category) &&
                     (parameter.index == index)
-                )
+            )
             {
                 return parameter;
             }
         }
         return null;
     }
-    
+
     public static boolean isDefaultLoaded()
     {
         return defaultLoaded;
     }
-    
+
     public String getDescription()
     {
         return desc;
     }
-    
+
     public String getCode()
     {
         return abbrev;
     }
-    
+
     public String getUnits()
     {
         return units;

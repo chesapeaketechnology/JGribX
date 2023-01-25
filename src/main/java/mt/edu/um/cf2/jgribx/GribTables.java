@@ -2,25 +2,35 @@
  * ===============================================================================
  * $Id: GribTables.java,v 1.6 2006/07/25 13:46:23 frv_peg Exp $
  * ===============================================================================
- * JGRIB library  
- *  
+ * JGRIB library
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- *  
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- * 
+ * <p>
  * Authors:
  * See AUTHORS file
  * ===============================================================================
+ * <p>
+ * GribTables.java  1.0  01/01/2001
+ * <p>
+ * (C) Benjamin Stark
+ * Updated Kjell Roang, 18/03/2002
+ * <p>
+ * GribTables.java  1.0  01/01/2001
+ * <p>
+ * (C) Benjamin Stark
+ * Updated Kjell Roang, 18/03/2002
  */
 
 /**
@@ -32,8 +42,6 @@
 
 package mt.edu.um.cf2.jgribx;
 
-
-
 /**
  * A class containing static methods which deliver descriptions and names of
  * parameters, levels and units for byte codes from GRIB records.
@@ -41,7 +49,7 @@ package mt.edu.um.cf2.jgribx;
  * @deprecated - Implementation of tables moved to GribPDSParamTable,
  *   GribPDSParameter, and GribPDSLevel classes.
  */
-
+@Deprecated
 public class GribTables
 {
 
@@ -55,85 +63,84 @@ public class GribTables
 //    */
 //   protected static int paramter_table;
 
-   /**
-    * Get a description for the level code.
-    *
-    * @param pds9  part 1 of leve code
-    * @param pds10 part 2 of level code
-    * @param pds11 part 3 of level code
-    *
-    * @return description of the level
-    */
-   public static String getLevel(int pds9, int pds10, int pds11)
-   {
+    /**
+     * Get a description for the level code.
+     *
+     * @param pds9  part 1 of leve code
+     * @param pds10 part 2 of level code
+     * @param pds11 part 3 of level code
+     *
+     * @return description of the level
+     */
+    public static String getLevel(int pds9, int pds10, int pds11)
+    {
 
-      int pds1011 = pds10 << 8 | pds11;
+        int pds1011 = pds10 << 8 | pds11;
 
-      switch (pds9)
-      {
+        switch (pds9)
+        {
 
-         case 1:
-            return "surface";
-         case 2:
-            return "cloud base level";
-         case 3:
-            return "cloud top level";
-         case 4:
-            return "0 degree isotherm level";
-         case 5:
-            return "condensation level";
-         case 6:
-            return "maximum wind speed level";
-         case 7:
-            return "tropopause level";
-         case 8:
-            return "nominal atmosphere top";
-         case 9:
-            return "sea bottom";
+            case 1:
+                return "surface";
+            case 2:
+                return "cloud base level";
+            case 3:
+                return "cloud top level";
+            case 4:
+                return "0 degree isotherm level";
+            case 5:
+                return "condensation level";
+            case 6:
+                return "maximum wind speed level";
+            case 7:
+                return "tropopause level";
+            case 8:
+                return "nominal atmosphere top";
+            case 9:
+                return "sea bottom";
 
-         case 100:
-            return pds1011 + " mb";
-         case 101:
-            return pds10 + "-" + pds11 + " mb";
-         case 102:
-            return "mean sea level";
-         case 103:
-            return pds1011 + " m above mean sea level";
-         case 104:
-            return (pds10 * 100) + "-" + (pds11 * 100) + " m above mean sea level";
-         case 105:
-            return pds1011 + " m above ground";
-         case 106:
-            return (pds10 * 100) + "-" + (pds11 * 100) + " m above ground";
-         case 107:
-            return "sigma=" + (pds1011 / 10000.0);
-         case 108:
-            return "sigma " + (pds10 / 100.0) + "-" + (pds11 / 100.0);
-         case 109:
-            return "hybrid level " + pds1011;
-         case 110:
-            return "hybrid " + pds10 + "-" + pds11;
-         case 111:
-            return pds1011 + " cm below ground";
-         case 112:
-            return pds10 + "-" + pds11 + " cm down";
-         case 113:
-            return pds1011 + " K";
-         case 125:
-            return pds1011 + " cm above ground";
-         case 160:
-            return pds1011 + " m below sea level";
+            case 100:
+                return pds1011 + " mb";
+            case 101:
+                return pds10 + "-" + pds11 + " mb";
+            case 102:
+                return "mean sea level";
+            case 103:
+                return pds1011 + " m above mean sea level";
+            case 104:
+                return (pds10 * 100) + "-" + (pds11 * 100) + " m above mean sea level";
+            case 105:
+                return pds1011 + " m above ground";
+            case 106:
+                return (pds10 * 100) + "-" + (pds11 * 100) + " m above ground";
+            case 107:
+                return "sigma=" + (pds1011 / 10000.0);
+            case 108:
+                return "sigma " + (pds10 / 100.0) + "-" + (pds11 / 100.0);
+            case 109:
+                return "hybrid level " + pds1011;
+            case 110:
+                return "hybrid " + pds10 + "-" + pds11;
+            case 111:
+                return pds1011 + " cm below ground";
+            case 112:
+                return pds10 + "-" + pds11 + " cm down";
+            case 113:
+                return pds1011 + " K";
+            case 125:
+                return pds1011 + " cm above ground";
+            case 160:
+                return pds1011 + " m below sea level";
 
-         case 200:
-            return "entire atmoshere layer";
-         case 201:
-            return "entire ocean layer";
+            case 200:
+                return "entire atmoshere layer";
+            case 201:
+                return "entire ocean layer";
 
-         default:
-            return "";
-      }
-
-   }
+            default:
+                return "";
+        }
+    }
 
 // rdg - implemented in GribPDSParameter - need to delete
 //   /**
@@ -146,7 +153,6 @@ public class GribTables
 //
 //      return paramtable_ncep_opn[id][0];
 //   }
-
 
 // rdg - implemented in GribPDSParameter - need to delete
 //   /**
@@ -203,7 +209,6 @@ public class GribTables
 //      paramtable_ncep_opn = params;
 //
 //   }
-
 
 // rdg - implemented in GribPDSParamTable - need to delete
 //   /**
@@ -527,6 +532,5 @@ public class GribTables
 //         System.err.println(e);
 //      }
 //   }
-
 }
 

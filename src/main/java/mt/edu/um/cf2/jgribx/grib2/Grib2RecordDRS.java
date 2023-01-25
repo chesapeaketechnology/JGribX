@@ -4,22 +4,24 @@
  * ============================================================================
  * Written by Andrew Spiteri <andrew.spiteri@um.edu.mt>
  * Adapted from JGRIB: http://jgrib.sourceforge.net/
- * 
+ *
  * Licensed under MIT: https://github.com/spidru/JGribX/blob/master/LICENSE
  * ============================================================================
  */
 package mt.edu.um.cf2.jgribx.grib2;
 
+import mt.edu.um.cf2.jgribx.GribCodes;
+import mt.edu.um.cf2.jgribx.GribInputStream;
+import mt.edu.um.cf2.jgribx.Logger;
+import mt.edu.um.cf2.jgribx.NoValidGribException;
+import mt.edu.um.cf2.jgribx.NotSupportedException;
+
 import java.io.IOException;
 
-import mt.edu.um.cf2.jgribx.*;
-import mt.edu.um.cf2.jgribx.GribCodes.DataRepresentation;
-import mt.edu.um.cf2.jgribx.grib2.Grib2RecordPDS;
 import static mt.edu.um.cf2.jgribx.Bytes2Number.FLOAT_IEEE754;
 import static mt.edu.um.cf2.jgribx.Bytes2Number.INT_SM;
 
 /**
- *
  * @author AVLAB-USER3
  */
 public class Grib2RecordDRS
@@ -54,8 +56,9 @@ public class Grib2RecordDRS
     protected int packingType;
     protected CompressionType compressionType;
     protected int compressionRatio;
-    
-    public static Grib2RecordDRS readFromStream(GribInputStream in) throws IOException, NotSupportedException, NoValidGribException {
+
+    public static Grib2RecordDRS readFromStream(GribInputStream in) throws IOException, NotSupportedException, NoValidGribException
+    {
         Grib2RecordDRS drs = new Grib2RecordDRS();
         drs.length = in.readUINT(4);
         int section = in.readUINT(1);
@@ -65,7 +68,7 @@ public class Grib2RecordDRS
             return null;
         }
         drs.nDataPoints = in.readUINT(4);
-        
+
         /* [10-11] Data representation template number */
         drs.packingType = in.readUINT(2);
         switch (drs.packingType)
@@ -98,7 +101,7 @@ public class Grib2RecordDRS
                 drs.nBitsScaledGroupLengths = in.readUINT(1);
                 drs.spatialDiffOrder = in.readUINT(1);
                 drs.spatialDescriptorOctets = in.readUINT(1);
-                
+
                 // get missing value
                 switch (drs.missingValueManagement)
                 {
@@ -136,7 +139,7 @@ public class Grib2RecordDRS
                 }
                 break;
             default:
-                throw new NotSupportedException("Data Representation type "+ drs.packingType +" not supported");
+                throw new NotSupportedException("Data Representation type " + drs.packingType + " not supported");
         }
         return drs;
     }
@@ -151,9 +154,18 @@ public class Grib2RecordDRS
 
     private static CompressionType getCompressionType(int code)
     {
-        if (code == 0) return CompressionType.LOSSLESS;
-        else if (code == 1) return CompressionType.LOSSY;
-        else if (code >= 2 && code <= 254) return CompressionType.RESERVED;
-        else return CompressionType.MISSING;
+        if (code == 0)
+        {
+            return CompressionType.LOSSLESS;
+        } else if (code == 1)
+        {
+            return CompressionType.LOSSY;
+        } else if (code >= 2 && code <= 254)
+        {
+            return CompressionType.RESERVED;
+        } else
+        {
+            return CompressionType.MISSING;
+        }
     }
 }

@@ -4,23 +4,23 @@
  * ============================================================================
  * Written by Andrew Spiteri <andrew.spiteri@um.edu.mt>
  * Adapted from JGRIB: http://jgrib.sourceforge.net/
- * 
+ *
  * Licensed under MIT: https://github.com/spidru/JGribX/blob/master/LICENSE
  * ============================================================================
  */
 package mt.edu.um.cf2.jgribx.grib2;
 
-import java.io.IOException;
 import mt.edu.um.cf2.jgribx.Bytes2Number;
 import mt.edu.um.cf2.jgribx.GribInputStream;
 import mt.edu.um.cf2.jgribx.NotSupportedException;
 
+import java.io.IOException;
+
 /**
- *
  * @author spidru
  */
 public class Grib2RecordGDSLatLon extends Grib2RecordGDS
-{    
+{
     public Grib2RecordGDSLatLon(GribInputStream in) throws IOException, NotSupportedException
     {
         super(in);
@@ -79,7 +79,7 @@ public class Grib2RecordGDSLatLon extends Grib2RecordGDS
 //        rowsZigzag = (scanMode & 0x10) == 0x10;
         if (!scanMode.iDirectionPositive) gridDi *= -1;
         if (!scanMode.jDirectionPositive) gridDj *= -1;
-        
+
         if (scanMode.iDirectionEvenRowsOffset || scanMode.iDirectionOddRowsOffset || scanMode.jDirectionOffset || !scanMode.rowsNiNjPoints || scanMode.rowsZigzag)
         {
             throw new NotSupportedException("Unsupported scan mode found");
@@ -94,12 +94,15 @@ public class Grib2RecordGDSLatLon extends Grib2RecordGDS
             }
         }
     }
-    
+
     @Override
     protected double[][] getGridCoords()
     {
-        if (gridNi == -1 || gridNj == -1) { return this.getQuasiRegularGridCoords(); }
-        double[][] coords = new double[gridNi*gridNj][2];
+        if (gridNi == -1 || gridNj == -1)
+        {
+            return this.getQuasiRegularGridCoords();
+        }
+        double[][] coords = new double[gridNi * gridNj][2];
 
         int k = 0;
         for (int j = 0; j < gridNj; j++)
@@ -109,20 +112,20 @@ public class Grib2RecordGDSLatLon extends Grib2RecordGDS
                 double lon = lon1 + i * gridDi;
                 double lat = lat1 + j * gridDj;
 
-            // move x-coordinates to the range -180..180
-            if (lon >= 180.0) lon = lon - 360.0;
-            if (lon < -180.0) lon = lon + 360.0;
-            if (lat > 90.0 || lat < -90.0)
-            {
-                System.err.println("GribGDSLatLon.getGridCoords: latitude out of range (-90 to 90).");
+                // move x-coordinates to the range -180..180
+                if (lon >= 180.0) lon = lon - 360.0;
+                if (lon < -180.0) lon = lon + 360.0;
+                if (lat > 90.0 || lat < -90.0)
+                {
+                    System.err.println("GribGDSLatLon.getGridCoords: latitude out of range (-90 to 90).");
+                }
+
+                coords[k][0] = lon;
+                coords[k][1] = lat;
+                k++;
             }
-            
-            coords[k][0] = lon;
-            coords[k][1] = lat;
-            k++;
-         }
-      }
-      return coords;
+        }
+        return coords;
     }
 
     private double[][] getQuasiRegularGridCoords()
@@ -151,6 +154,7 @@ public class Grib2RecordGDSLatLon extends Grib2RecordGDS
 
     /**
      * Normalizes the specified angle to fit into the range ]-180, 180]
+     *
      * @param angle The angle to normalize (units: degrees)
      * @return The normalized angle (units: degrees)
      * Adapted from: https://stackoverflow.com/questions/2320986/easy-way-to-keeping-angles-between-179-and-180-degrees
@@ -171,7 +175,7 @@ public class Grib2RecordGDSLatLon extends Grib2RecordGDS
 
         return angle;
     }
-    
+
     @Override
     protected double[] getGridXCoords()
     {
@@ -188,15 +192,15 @@ public class Grib2RecordGDSLatLon extends Grib2RecordGDS
                 // move x-coordinates to the range -180..180
                 if (lon >= 180.0) lon = lon - 360.0;
                 if (lon < -180.0) lon = lon + 360.0;
+            } else
+            { // handle wrapping at 360
+                if (lon >= 360.0) lon = lon - 360.0;
             }
-            else{ // handle wrapping at 360
-            if (lon >= 360.0) lon = lon - 360.0;
-         }
-         coords[k++] = lon;
-      }
-      return coords;
+            coords[k++] = lon;
+        }
+        return coords;
     }
-    
+
     @Override
     protected double[] getGridYCoords()
     {
@@ -207,42 +211,44 @@ public class Grib2RecordGDSLatLon extends Grib2RecordGDS
         {
             double lat = lat1 + y * gridDj;
             if (lat > 90.0 || lat < -90.0)
+            {
                 System.err.println("GribGDSLatLon.getYCoords: latitude out of range (-90 to 90).");
+            }
             coords[k++] = lat;
-      }
-      return coords;
+        }
+        return coords;
     }
-    
+
     @Override
     protected double getGridDeltaX()
     {
         return gridDi;
     }
-    
+
     @Override
     protected double getGridDeltaY()
     {
         return gridDj;
     }
-    
+
     @Override
     protected double getGridLatStart()
     {
         return lat1;
     }
-    
+
     @Override
     protected double getGridLonStart()
     {
         return lon1;
     }
-    
+
     @Override
     protected int getGridSizeX()
     {
         return gridNi;
     }
-    
+
     @Override
     protected int getGridSizeY()
     {

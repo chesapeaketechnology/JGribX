@@ -3,7 +3,10 @@ package mt.edu.um.cf2.jgribx;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -16,7 +19,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class GribTest
 {
@@ -70,9 +75,11 @@ public class GribTest
             float[] obtainedValues = record.getValues();
 
             String gribFilepath = "";
-            try {
+            try
+            {
                 gribFilepath = new File(url.toURI()).getAbsolutePath();
-            } catch (URISyntaxException e) {
+            } catch (URISyntaxException e)
+            {
                 e.printStackTrace();
             }
             ProcessBuilder pb = new ProcessBuilder(
@@ -92,40 +99,52 @@ public class GribTest
             if (wgribDir == null)
             {
                 wgribCwd = System.getProperty("user.dir");
-            }
-            else
+            } else
             {
                 wgribCwd = wgribDir.getAbsolutePath();
             }
-            System.out.println(String.format("Executing in %s: %s", wgribCwd, cmd));
+            System.out.printf("Executing in %s: %s%n", wgribCwd, cmd);
             try
             {
                 Process process = pb.start();
                 boolean exited = process.waitFor(2, TimeUnit.SECONDS);
                 assertTrue("wgrib has not exited", exited);
-                assertTrue(String.format("wgrib has returned error code %d", process.exitValue()), process.exitValue() == 0);
+                assertEquals(String.format("wgrib has returned error code %d", process.exitValue()), 0, process.exitValue());
             } catch (IOException | InterruptedException e)
             {
                 System.err.println("Exception: " + e.getMessage());
             }
 
             // Read dump file
-            try (BufferedReader reader = new BufferedReader(new FileReader("dump"));)
+            try (BufferedReader reader = new BufferedReader(new FileReader("dump")))
             {
                 String line;
 
                 int i = 0;
                 while ((line = reader.readLine()) != null)
                 {
-		    // Calculate the tolerance based on the maximum data value
+                    // Calculate the tolerance based on the maximum data value
                     double tolerance = 0;
                     double maxValue = GribTest.getMaxValue(obtainedValues);
-                    if (maxValue >= 100e3) { tolerance = 0.9; }
-                    else if (maxValue >= 10e3) { tolerance = 0.5; }
-                    else if (maxValue >= 1e3) { tolerance = 0.05; }
-                    else if (maxValue >= 100) { tolerance = 0.005; }
-                    else if (maxValue >= 10) { tolerance = 0.0005; }
-                    else { tolerance = 0.00005; }
+                    if (maxValue >= 100e3)
+                    {
+                        tolerance = 0.9;
+                    } else if (maxValue >= 10e3)
+                    {
+                        tolerance = 0.5;
+                    } else if (maxValue >= 1e3)
+                    {
+                        tolerance = 0.05;
+                    } else if (maxValue >= 100)
+                    {
+                        tolerance = 0.005;
+                    } else if (maxValue >= 10)
+                    {
+                        tolerance = 0.0005;
+                    } else
+                    {
+                        tolerance = 0.00005;
+                    }
 
                     float expectedValue = Float.parseFloat(line);
 
@@ -133,7 +152,8 @@ public class GribTest
                             expectedValue, obtainedValues[i], tolerance);
                     i++;
                 }
-            } catch (IOException e) {
+            } catch (IOException e)
+            {
                 System.out.println("Exception: " + e.getMessage());
             }
         }
@@ -187,7 +207,10 @@ public class GribTest
         float max = values[0];
         for (int i = 1; i < values.length; i++)
         {
-            if (values[i] > max) { max = values[i]; }
+            if (values[i] > max)
+            {
+                max = values[i];
+            }
         }
         return max;
     }

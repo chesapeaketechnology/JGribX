@@ -6,16 +6,35 @@
  * Reference: https://docs.gradle.org/7.3/userguide/building_java_projects.html
  *
  */
+plugins {
+	id "java"
+	id "maven-publish"
+	id "eclipse"
+}
 
-// Apply the java plugin to add support for Java
-apply plugin: 'java'
-apply plugin: 'eclipse'
+version = 0.1
+group 'mt.edu.um.cf2'
 
 // In this section you declare where to find the dependencies of your project
 repositories {
     // Use 'jcenter' for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
+}
+
+publishing {
+	publications {
+		customLibrary(MavenPublication) {
+			from components.java
+		}
+	}
+
+	repositories {
+		maven {
+			name = 'mt.edu.um.cf2.jgribx'
+			url = layout.buildDirectory.dir("repo")
+		}
+	}
 }
 
 sourceSets {
@@ -27,14 +46,18 @@ sourceSets {
 	}
 }
 
+java {
+	withSourcesJar()
+}
+
 configurations {
     extraLibs
 }
 
 test {
-		testLogging {
-    		events 'started', 'passed'
-		}
+	testLogging {
+		events 'started', 'passed'
+	}
 }
 
 jar {
@@ -59,5 +82,5 @@ dependencies {
     // TestNG is also supported by the Gradle Test task. Just change the
     // testCompile dependency to testCompile 'org.testng:testng:6.8.1' and add
     // 'test.useTestNG()' to your build script.
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.1'
 }

@@ -4,13 +4,19 @@
  * ============================================================================
  * Written by Andrew Spiteri <andrew.spiteri@um.edu.mt>
  * Adapted from JGRIB: http://jgrib.sourceforge.net/
- * 
+ *
  * Licensed under MIT: https://github.com/spidru/JGribX/blob/master/LICENSE
  * ============================================================================
  */
 package mt.edu.um.cf2.jgribx;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.EOFException;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -23,74 +29,70 @@ import java.util.regex.Pattern;
 /**
  * The GribFile class represents a GRIB file containing any number of records,
  * stored within the class as a {@link List}{@code <}{@link GribRecord}{@code >}.
- * 
+ * <p>
  * This class can be considered as a top-level class which does not deal with
  * the underlying format of the records within the file. This means that this
- * class remains valid for all formats such as GRIB-1 and GRIB-2. 
- *
+ * class remains valid for all formats such as GRIB-1 and GRIB-2.
  */
 
 public class GribFile
 {
     private int nRecordsSkipped;
-    
+
     /**
      * List of GRIB records
      */
-    private List<GribRecord> records;
+    private final List<GribRecord> records;
 
-   /**
-    * Constructs a {@link GribFile} object from a file.
-    *
-    * @param filepath name of the GRIB file
-    *
-    * @throws FileNotFoundException if file cannot be found
-    * @throws IOException           if file cannot be opened etc.
-    * @throws NotSupportedException if file contains features not yet supported
-    * @throws NoValidGribException  if file is no valid GRIB file
-    */
+    /**
+     * Constructs a {@link GribFile} object from a file.
+     *
+     * @param filepath name of the GRIB file
+     * @throws FileNotFoundException if file cannot be found
+     * @throws IOException           if file cannot be opened etc.
+     * @throws NotSupportedException if file contains features not yet supported
+     * @throws NoValidGribException  if file is no valid GRIB file
+     */
     public GribFile(String filepath) throws FileNotFoundException,
-        IOException, NotSupportedException, NoValidGribException
+            IOException, NotSupportedException, NoValidGribException
     {
         this(new FileInputStream(filepath));
     }
 
-   /**
-    * Constructs a {@link GribFile} object from an input stream.
-    *
-    * @param in input stream with GRIB content
-    *
-    * @throws IOException           if stream cannot be opened etc.
-    * @throws NotSupportedException if file contains features not yet supported
-    * @throws NoValidGribException  if stream does not contain a valid GRIB file
-    */
-   public GribFile(InputStream in) throws IOException,
-          NotSupportedException, NoValidGribException
-   {
-       // note: the BufferedInputStream enables mark/reset functionality
-       this(new GribInputStream(new BufferedInputStream(in)));
-   }
+    /**
+     * Constructs a {@link GribFile} object from an input stream.
+     *
+     * @param in input stream with GRIB content
+     * @throws IOException           if stream cannot be opened etc.
+     * @throws NotSupportedException if file contains features not yet supported
+     * @throws NoValidGribException  if stream does not contain a valid GRIB file
+     */
+    public GribFile(InputStream in) throws IOException,
+            NotSupportedException, NoValidGribException
+    {
+        // note: the BufferedInputStream enables mark/reset functionality
+        this(new GribInputStream(new BufferedInputStream(in)));
+    }
 
-   /**
-    * Constructs a {@link GribFile} object from a bit input stream.
-    *
-    * @param in bit input stream with GRIB content
-    *
-    * @throws IOException           if stream can not be opened etc.
-    * @throws NotSupportedException if file contains features not yet supported
-    * @throws NoValidGribException  if stream does not contain a valid GRIB file
-    */
+    /**
+     * Constructs a {@link GribFile} object from a bit input stream.
+     *
+     * @param in bit input stream with GRIB content
+     * @throws IOException           if stream can not be opened etc.
+     * @throws NotSupportedException if file contains features not yet supported
+     * @throws NoValidGribException  if stream does not contain a valid GRIB file
+     */
     public GribFile(GribInputStream in) throws IOException,
-          NotSupportedException, NoValidGribException
+            NotSupportedException, NoValidGribException
     {
         // Initialise fields
         nRecordsSkipped = 0;
         records = new ArrayList();
 
         /*
-        * Initialise the Parameter Tables with the information in the parameter
-        * table lookup file.  See GribPDSParamTable for details
-        */
+         * Initialise the Parameter Tables with the information in the parameter
+         * table lookup file.  See GribPDSParamTable for details
+         */
         //GribPDSParamTable.readParameterTableLookup(); done in static initializer
 
         int count = 0;
@@ -102,50 +104,52 @@ public class GribFile
             {
                 Logger.println("Reading next record: " + count, Logger.DEBUG);
                 record = GribRecord.readFromStream(in);
-            }
-            catch (NotSupportedException|NoValidGribException e)
+            } catch (NotSupportedException | NoValidGribException e)
             {
-                Logger.println("Skipping GRIB record "+count+" ("+e.getMessage()+")", Logger.WARNING);
+                Logger.println("Skipping GRIB record " + count + " (" + e.getMessage() + ")", Logger.WARNING);
                 nRecordsSkipped++;
                 // Skip to end of current record
                 try
                 {
                     GribRecordES.seekNext(in);
-                }
-                catch (EOFException eofe)
+                } catch (EOFException eofe)
                 {
                     Logger.println("EOFException while seeking ES: " + eofe.getMessage(), Logger.INFO);
                 }
                 continue;
-            }
-            finally
+            } finally
             {
                 try
                 {
                     GribRecordIS.seekNext(in);
+                } catch (EOFException ignored)
+                {
                 }
-                catch (EOFException ignored) {}
             }
 
-            Logger.println("GRIB Record "+count, Logger.INFO);
-            Logger.println("\tReference Time: "+record.getReferenceTime().getTime().toString(), Logger.INFO);
-            Logger.println("\tForecast Time: " + record.getForecastTime().getTime().toString(), Logger.INFO);
-            Logger.println("\tParameter: "+record.getParameterCode()+" ("+record.getParameterDescription()+")", Logger.INFO);
-            Logger.println("\tLevel: "+record.getLevelCode()+" ("+record.getLevelDescription()+")", Logger.INFO);
-            
+            Logger.println("GRIB Record " + count, Logger.INFO);
+            Logger.println("\tReference Time: " + record.getReferenceTime().getTime(), Logger.INFO);
+            Logger.println("\tForecast Time: " + record.getForecastTime().getTime(), Logger.INFO);
+            Logger.println("\tParameter: " + record.getParameterCode() + " (" + record.getParameterDescription() + ")", Logger.INFO);
+            Logger.println("\tLevel: " + record.getLevelCode() + " (" + record.getLevelDescription() + ")", Logger.INFO);
+
             records.add(record);
         }
 
         in.close();
 
         if (records.isEmpty())
-           throw new NoValidGribException("No valid GRIB records found.");
-        else
-            Logger.println("Reached end of file: "+records.size()+" of "+count+" records read successfully", Logger.INFO);
+        {
+            throw new NoValidGribException("No valid GRIB records found.");
+        } else
+        {
+            Logger.println("Reached end of file: " + records.size() + " of " + count + " records read successfully", Logger.INFO);
+        }
     }
-    
+
     /**
      * Returns the different originating centre IDs found in the GRIB file.
+     *
      * @return the different originating centre IDs found in the GRIB file
      */
     public int[] getCentreIDs()
@@ -155,18 +159,22 @@ public class GribFile
         {
             int id = record.getCentreId();
             if (!idList.contains(id))
+            {
                 idList.add(id);
+            }
         }
         int[] ids = new int[idList.size()];
         for (int i = 0; i < idList.size(); i++)
+        {
             ids[i] = idList.get(i);
+        }
         return ids;
     }
-    
+
     public int getEdition()
     {
         int edition = records.get(0).getIS().getGribEdition();
-        
+
         // Check if GRIB file contains different editions
         // TODO not sure if different editions within one file should be allowed
         for (int i = 1; i < records.size(); i++)
@@ -177,7 +185,7 @@ public class GribFile
                 break;
             }
         }
-        
+
         return edition;
     }
 
@@ -198,25 +206,26 @@ public class GribFile
                 }
             }
             if (!matchFound)
+            {
                 forecastTimeList.add(record.getForecastTime());
-            
+            }
         }
         Collections.sort(forecastTimeList);
         return forecastTimeList;
     }
-    
+
     /**
      * Returns a sorted list of different parameter codes present within the
      * GRIB file.
-     * 
+     *
      * @return a sorted list of different parameter codes present within the
      * GRIB file.
      */
     public List<String> getParameterCodes()
     {
-            /**
-     * List of different parameters present in the GRIB file
-     */
+        /**
+         * List of different parameters present in the GRIB file
+         */
         List<String> parameterList = new ArrayList();
         for (GribRecord record : records)
         {
@@ -229,11 +238,11 @@ public class GribFile
         Collections.sort(parameterList);
         return parameterList;
     }
-    
+
     /**
      * Returns a sorted list of different parameter levels as textual
      * descriptions.
-     * 
+     *
      * @return a sorted list of different parameter levels as textual
      * descriptions
      */
@@ -251,7 +260,7 @@ public class GribFile
         Collections.sort(levelDescList);
         return levelDescList;
     }
-    
+
     public List<String> getParameterLevelDescriptions(String paramCode)
     {
         List<String> descList = new ArrayList();
@@ -260,14 +269,17 @@ public class GribFile
             if (record.getParameterCode().equals(paramCode))
             {
                 if (descList.contains(record.getLevelIdentifier()))
+                {
                     System.err.println("Record contains duplicate level IDs");
-                else
+                } else
+                {
                     descList.add(record.getLevelDescription());
+                }
             }
         }
         return descList;
     }
-    
+
     public List<String> getParameterLevelIdentifiers(String paramCode)
     {
         List<String> idList = new ArrayList();
@@ -278,14 +290,17 @@ public class GribFile
                 if (idList.contains(record.getLevelIdentifier()))
                     ;//System.err.println("Record contains duplicate level IDs");
                 else
+                {
                     idList.add(record.getLevelIdentifier());
+                }
             }
         }
         return idList;
     }
-    
+
     /**
      * Returns the different generating process IDs found in the GRIB file.
+     *
      * @return the different generating process IDs found in the GRIB file
      */
     public int[] getProcessIDs()
@@ -295,37 +310,43 @@ public class GribFile
         {
             int id = record.getProcessId();
             if (!idList.contains(id))
+            {
                 idList.add(id);
+            }
         }
         int[] ids = new int[idList.size()];
         for (int i = 0; i < idList.size(); i++)
+        {
             ids[i] = idList.get(i);
+        }
         return ids;
     }
-        
+
     /**
-    * Get the number of records this GRIB file contains.
-    *
-    * @return number of records in this GRIB file
-    */
-   public int getRecordCount()
-   {
-      return records.size();
-   }
-   
+     * Get the number of records this GRIB file contains.
+     *
+     * @return number of records in this GRIB file
+     */
+    public int getRecordCount()
+    {
+        return records.size();
+    }
+
     /**
      * Returns the number of records skipped due to them being invalid or not
      * supported.
+     *
      * @return the number of records skipped
      */
     public int getRecordsSkippedCount()
     {
         return nRecordsSkipped;
     }
-   
+
     /**
      * Get all the records successfully read.
-     * @return 
+     *
+     * @return
      */
     public List<GribRecord> getRecords()
     {
@@ -340,9 +361,10 @@ public class GribFile
      * in the list of records. This forecast time is then used together with the
      * specified parameter and level to find a record which matches these values.
      * </p>
-     * @param time Forecast time to search for
+     *
+     * @param time            Forecast time to search for
      * @param parameterAbbrev Parameter to search for
-     * @param levelCode Level to search for
+     * @param levelCode       Level to search for
      * @return The found record, null if no record has been found
      */
     public GribRecord getRecord(Calendar time, String parameterAbbrev, String levelCode)
@@ -380,12 +402,13 @@ public class GribFile
                 }
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * Return a List of different reference times present in the GRIB file.
+     *
      * @return a sorted list of different reference times
      */
     public List<Calendar> getReferenceTimes()
@@ -402,10 +425,11 @@ public class GribFile
         Collections.sort(referenceTimeList);
         return referenceTimeList;
     }
-    
+
     /**
      * Prints out a summary of the GRIB file.
-     * @param out 
+     *
+     * @param out
      */
     public void getSummary(PrintStream out)
     {
@@ -415,14 +439,14 @@ public class GribFile
         int[] processIds = this.getProcessIDs();
         List<Calendar> refDates = this.getReferenceTimes();
         List<Calendar> forecastDates = this.getForecastTimes();
-        
+
         // Print out generic GRIB file info
         out.println("---------------------------------------");
         out.println("GRIB Edition: " + this.getEdition());
         out.println("Records successfully read: " + this.getRecordCount() + " of "
                 + (this.getRecordCount() + this.getRecordsSkippedCount()));
         out.println("---------------------------------------");
-        
+
         // Print out originating centre info
         out.print("Weather Centre(s): ");
         for (int i = 0; i < centreIds.length; i++)
@@ -432,7 +456,7 @@ public class GribFile
             if (i != centreIds.length - 1) out.print(",");
         }
         out.println();
-        
+
         // Print out generating process info
         out.print("Generating Process(es): ");
         for (int i = 0; i < processIds.length; i++)
@@ -442,14 +466,14 @@ public class GribFile
             if (i != processIds.length - 1) out.print(",");
         }
         out.println();
-        
+
         // Get reference time
         System.out.println("Reference Time: ");
         for (Calendar date : refDates)
         {
             System.out.println("\t" + sdf.format(date.getTime()));
         }
-        
+
         // Get forecast times
         System.out.println("Forecast Time(s): ");
         for (Calendar date : forecastDates)
@@ -457,18 +481,15 @@ public class GribFile
             System.out.println("\t" + sdf.format(date.getTime()));
         }
     }
-        
-   /**
-    * Get a string representation of the GRIB file.
-    *
-    * @return NoValidGribException   if record is no valid GRIB record
-    */
+
+    /**
+     * Get a string representation of the GRIB file.
+     *
+     * @return NoValidGribException   if record is no valid GRIB record
+     */
     @Override
     public String toString()
     {
         return "GRIB file (" + records.size() + " records)";
     }
-    
-
-
 }

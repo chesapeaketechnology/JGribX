@@ -2,22 +2,22 @@
  * ===============================================================================
  * $Id: GribTabPool.java,v 1.6 2006/07/25 13:46:23 frv_peg Exp $
  * ===============================================================================
- * JGRIB library  
- *  
+ * JGRIB library
+ * <p>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- *  
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- * 
+ * <p>
  * Authors:
  * See AUTHORS file
  * ===============================================================================
@@ -25,36 +25,35 @@
 
 package mt.edu.um.cf2.jgribx.grib1;
 
+import mt.edu.um.cf2.jgribx.NotSupportedException;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.Iterator;
-import mt.edu.um.cf2.jgribx.NotSupportedException;
-
 
 /**
  * A class containing static methods which deliver descriptions and names of
  * parameters, levels and units for byte codes from GRIB records.
  * The class contain one default tables. Other tables may be added into the "tables" directory and
  * the name added into the "tables.lst" file
- * 
+ * <p>
  * This class is kept in the library to keep backward compability, but will
- * complain during compilation, because it uses a deprecated class: 
+ * complain during compilation, because it uses a deprecated class:
  * net.sourceforge.jgrib.Gribtab.
- * 
+ * <p>
  * The class has been deprecated since jgrib-beta6.
- * 
- * @deprecated Implemetation now is supported by GribPDSParamTable
- * 
+ *
  * @author Tor Christian Bekkvik
+ * @deprecated Implemetation now is supported by GribPDSParamTable
  */
-
+@Deprecated
 public class GribTabPool
 {
-   //vector of GribTab
-   //private static List tableList = new ArrayList();
-   //private static boolean sorted = false;
-   //private static final String TABLE_DIRECTORY = "tables";
-   //private static final String TABLE_LIST = "tables.lst";
+    //vector of GribTab
+    //private static List tableList = new ArrayList();
+    //private static boolean sorted = false;
+    //private static final String TABLE_DIRECTORY = "tables";
+    //private static final String TABLE_LIST = "tables.lst";
 
 //   private static String[][] default_paramtable =
 //         {
@@ -316,12 +315,11 @@ public class GribTabPool
 //                        /* 255 */   {"var255", "undefined", "undifined"}
 //         };
 
+    // Commented by Peter Gylling <peg at frv.dk> on 2005-10-05
+    // because functionality is dublicated automatically by the
+    // GribPDSParamTable class, thus no idea in loading tables
+    // into useless memmory
 
-  // Commented by Peter Gylling <peg at frv.dk> on 2005-10-05
-  // because functionality is dublicated automatically by the
-  // GribPDSParamTable class, thus no idea in loading tables 
-  // into useless memmory 
- 
 //   /**
 //    * At init do load tables
 //    */
@@ -368,46 +366,54 @@ public class GribTabPool
 //      }
 //   }
 
-   /**
-    * Default private contructor
-    * @deprecated Use GribPDSParameterTable
-    */
-   private GribTabPool(){}
+    /**
+     * Default private contructor
+     *
+     * @deprecated Use GribPDSParameterTable
+     */
+    @Deprecated
+    private GribTabPool()
+    {
+    }
 
+    /**
+     * Add paramter table
+     *
+     * @param fileName Name of input file
+     * @throws IOException
+     */
+    public static void addParamterTable(String fileName)
+            throws IOException
+    {
+        URL url = new URL(fileName);
+        try
+        {
+            GribPDSParamTable.readTableEntry(url, GribPDSParamTable.tables);
+        } catch (NotSupportedException e)
+        {
+            System.err.println(e);
+        }
+        //addTable(new GribTab(fileName));
+    }
 
-   /**
-    * Add paramter table
-    * @param fileName Name of input file
-    * @throws IOException 
-    * 
-    */
-   public static void addParamterTable(String fileName)
-         throws IOException
-   {
-	  URL url = new URL(fileName);
-	  try {
-		GribPDSParamTable.readTableEntry(url,GribPDSParamTable.tables);
-	  } catch (NotSupportedException e) {
-		System.err.println(e);
-	  } 
-      //addTable(new GribTab(fileName));
-   }
-
-   /**
-    * Add paramter table
-    * @param url URL of input file
-    * @throws IOException 
-    */
-   public static void addParamterTable(URL url)
-         throws IOException
-   {
-	  try {
-		GribPDSParamTable.readTableEntry(url,GribPDSParamTable.tables);
-	  } catch (NotSupportedException e) {
-		System.err.println(e);
-	  } 
-	  //addTable(new GribTab(url));
-   }
+    /**
+     * Add paramter table
+     *
+     * @param url URL of input file
+     * @throws IOException
+     */
+    public static void addParamterTable(URL url)
+            throws IOException
+    {
+        try
+        {
+            GribPDSParamTable.readTableEntry(url, GribPDSParamTable.tables);
+        } catch (NotSupportedException e)
+        {
+            System.err.println(e);
+        }
+        //addTable(new GribTab(url));
+    }
 
 //   /**
 //    * 
@@ -478,16 +484,16 @@ public class GribTabPool
 //      return null;
 //   }
 
-   /**
-    * Dumps to STDOUT
-    */
-   public static void printAll()
-   {
-      Iterator iter = GribPDSParamTable.tables.iterator();
-      while (iter.hasNext()) 
-      {
-    	  GribPDSParamTable table = (GribPDSParamTable) iter.next();
-    	  table.toString();
-      }
-   }
+    /**
+     * Dumps to STDOUT
+     */
+    public static void printAll()
+    {
+        Iterator iter = GribPDSParamTable.tables.iterator();
+        while (iter.hasNext())
+        {
+            GribPDSParamTable table = (GribPDSParamTable) iter.next();
+            table.toString();
+        }
+    }
 }
