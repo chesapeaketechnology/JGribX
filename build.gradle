@@ -1,15 +1,15 @@
 /*
  * Gradle build file for JGribX
  *
- * Target Gradle version: 7.3.2
+ * Target Gradle version: 7.3.3
  *
  * Reference: https://docs.gradle.org/7.3/userguide/building_java_projects.html
  *
  */
 plugins {
-	id "java"
-	id "maven-publish"
-	id "eclipse"
+    id "java"
+    id "maven-publish"
+    id "eclipse"
 }
 
 version = 0.1
@@ -23,31 +23,27 @@ repositories {
 }
 
 publishing {
-	publications {
-		customLibrary(MavenPublication) {
-			from components.java
-		}
-	}
+    publications {
+        customLibrary(MavenPublication) {
+            from components.java
+        }
+    }
 
-	repositories {
-		maven {
-			name = 'mt.edu.um.cf2.jgribx'
-			url = layout.buildDirectory.dir("repo")
-		}
-	}
+    repositories {
+        maven {
+            name = 'mt.edu.um.cf2.jgribx'
+            url = layout.buildDirectory.dir("repo")
+        }
+    }
 }
 
 sourceSets {
-	main {
-		resources.srcDirs = ["src/main/java","src/main/resources"]
-	}
-	test {
-		resources.srcDirs = ["src/test/java", "src/test/resources"]
-	}
-}
-
-java {
-	withSourcesJar()
+    main {
+        resources.srcDirs = ["src/main/java", "src/main/resources"]
+    }
+    test {
+        resources.srcDirs = ["src/test/java", "src/test/resources"]
+    }
 }
 
 configurations {
@@ -55,28 +51,33 @@ configurations {
 }
 
 test {
-	testLogging {
-		events 'started', 'passed'
-	}
+    testLogging {
+        events 'started', 'passed'
+    }
 }
 
 jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
     from {
         configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
     }
-	manifest {
-		attributes 'Main-Class': 'mt.edu.um.cf2.jgribx.CommandLine'
-	}
+    manifest {
+        attributes 'Main-Class': 'mt.edu.um.cf2.jgribx.CommandLine'
+    }
 }
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
     extraLibs(
-        [group: 'commons-cli', name: 'commons-cli', version: '1.4'],
-        ['org.slf4j:slf4j-api:1.7.25'],
-        ['edu.ucar:jj2000:5.2']
+            [group: 'commons-cli', name: 'commons-cli', version: '1.4'],
+            ['org.slf4j:slf4j-api:1.7.25'],
+            ['edu.ucar:jj2000:5.2']
     )
     configurations.implementation.extendsFrom(configurations.extraLibs)
+
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+
 
     // Declare the dependency for your favourite test framework you want to use in your tests.
     // TestNG is also supported by the Gradle Test task. Just change the

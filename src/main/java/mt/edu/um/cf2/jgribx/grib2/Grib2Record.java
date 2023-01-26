@@ -17,6 +17,7 @@ import mt.edu.um.cf2.jgribx.Logger;
 import mt.edu.um.cf2.jgribx.NoValidGribException;
 import mt.edu.um.cf2.jgribx.NotSupportedException;
 import mt.edu.um.cf2.jgribx.grib2.Grib2RecordGDS.ScanMode;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
@@ -226,7 +227,7 @@ public class Grib2Record extends GribRecord
             return DEFAULT_UNKNOWN_VALUE;
         }
 
-        if (latitude < gds.lon1 || latitude > gds.lon2)
+        if (longitude < gds.lon1 || longitude > gds.lon2)
         {
             logger.warn("Longitude was out of scope for the GRIB2 file: {}, {}", gds.lon1, gds.lon2);
             return DEFAULT_UNKNOWN_VALUE;
@@ -257,9 +258,11 @@ public class Grib2Record extends GribRecord
         return value;
     }
 
-    public double getValue(float[] values, Grib2RecordGDS gds, double latitude, double longitude)
+    public static double getValueFromParsedObject(Pair<Grib2RecordGDS, Pair<String, float[]>> values, double latitude, double longitude)
     {
         double value;
+        Grib2RecordGDS gds = values.getKey();
+        float[] windValues = values.getValue().getValue();
 
         if (latitude < gds.lat1 || latitude > gds.lat2)
         {
@@ -267,7 +270,7 @@ public class Grib2Record extends GribRecord
             return DEFAULT_UNKNOWN_VALUE;
         }
 
-        if (latitude < gds.lon1 || latitude > gds.lon2)
+        if (longitude < gds.lon1 || longitude > gds.lon2)
         {
             logger.warn("Longitude was out of scope for the GRIB2 file: {}, {}", gds.lon1, gds.lon2);
             return DEFAULT_UNKNOWN_VALUE;
@@ -286,10 +289,10 @@ public class Grib2Record extends GribRecord
 
         if (scanMode.iDirectionConsecutive)
         {
-            value = dsList.get(0).data[gds.gridNi * j + i];
+            value = windValues[gds.gridNi * j + i];
         } else
         {
-            value = dsList.get(0).data[gds.gridNj * i + j];
+            value = windValues[gds.gridNj * i + j];
         }
 
         return value;
@@ -300,7 +303,7 @@ public class Grib2Record extends GribRecord
     {
         if (dsList.size() > 1)
         {
-            logger.warn("Unsupported Grib2RecordDS count, maximum allowed is 1.");
+            logger.warn("Unsupported Grib2RecordDS count, maximum allowed is 1 (currently the only implementation).");
             return null;
         }
 
