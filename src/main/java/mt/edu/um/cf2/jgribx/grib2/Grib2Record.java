@@ -257,6 +257,44 @@ public class Grib2Record extends GribRecord
         return value;
     }
 
+    public double getValue(float[] values, Grib2RecordGDS gds, double latitude, double longitude)
+    {
+        double value;
+
+        if (latitude < gds.lat1 || latitude > gds.lat2)
+        {
+            logger.warn("Latitude was out of scope for the GRIB2 file: {}, {}", gds.lat1, gds.lat2);
+            return DEFAULT_UNKNOWN_VALUE;
+        }
+
+        if (latitude < gds.lon1 || latitude > gds.lon2)
+        {
+            logger.warn("Longitude was out of scope for the GRIB2 file: {}, {}", gds.lon1, gds.lon2);
+            return DEFAULT_UNKNOWN_VALUE;
+        }
+
+        int j = (int) Math.round((latitude - gds.getGridLatStart()) / gds.getGridDeltaY());     // j = index_closest_latitude
+        int i = (int) Math.round((longitude - gds.getGridLonStart()) / gds.getGridDeltaX());    // i = index_closest_longitude
+
+        ScanMode scanMode = gds.scanMode;
+
+        if (scanMode.iDirectionEvenRowsOffset || scanMode.iDirectionOddRowsOffset || scanMode.jDirectionOffset ||
+                !scanMode.rowsNiNjPoints || scanMode.rowsZigzag)
+        {
+            System.err.println("Unsupported scan mode found");
+        }
+
+        if (scanMode.iDirectionConsecutive)
+        {
+            value = dsList.get(0).data[gds.gridNi * j + i];
+        } else
+        {
+            value = dsList.get(0).data[gds.gridNj * i + j];
+        }
+
+        return value;
+    }
+
     @Override
     public float[] getValues()
     {
