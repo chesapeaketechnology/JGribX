@@ -1,3 +1,5 @@
+import org.gradle.api.file.DuplicatesStrategy
+
 /*
  * Gradle build file for JGribX
  *
@@ -56,12 +58,31 @@ test {
     }
 }
 
+configurations {
+    runtime
+    ajc
+    aspects
+    expandedJars.transitive = false
+    api {
+        extendsFrom(aspects)
+        extendsFrom(expandedJars)
+    }
+    testArtifacts.extendsFrom testRuntime
+    offlinePluginDependency.extendsFrom(compileOnly)
+}
+
 jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
     from {
-        configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
+        // Expand all the project jars into the main jar so Raptor can find the CDI annotations
+        (configurations.expandedJars).collect { zipTree(it) }
     }
+    into('lib') {
+        from((configurations.runtimeClasspath - configurations.offlinePluginDependency) - configurations.expandedJars)
+        exclude 'log4j*'
+        exclude 'slf4j*'
+    }
+
     manifest {
         attributes 'Main-Class': 'mt.edu.um.cf2.jgribx.CommandLine'
     }
