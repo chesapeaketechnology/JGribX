@@ -35,12 +35,12 @@ public class Grib2Record extends GribRecord
 
     protected GribRecordIS is;
     protected Grib2RecordIDS ids;
-    protected List<Grib2RecordLUS> lusList = new ArrayList();
-    protected List<Grib2RecordGDS> gdsList = new ArrayList();
-    protected List<Grib2RecordPDS> pdsList = new ArrayList();
-    protected List<Grib2RecordDRS> drsList = new ArrayList();
-    protected List<Grib2RecordBMS> bmsList = new ArrayList();
-    protected List<Grib2RecordDS> dsList = new ArrayList();
+    protected List<Grib2RecordLUS> lusList = new ArrayList<>();
+    protected List<Grib2RecordGDS> gdsList = new ArrayList<>();
+    protected List<Grib2RecordPDS> pdsList = new ArrayList<>();
+    protected List<Grib2RecordDRS> drsList = new ArrayList<>();
+    protected List<Grib2RecordBMS> bmsList = new ArrayList<>();
+    protected List<Grib2RecordDS> dsList = new ArrayList<>();
 
     public static final double DEFAULT_UNKNOWN_VALUE = 0.0d;
 
@@ -55,10 +55,6 @@ public class Grib2Record extends GribRecord
         while (recordLength > 4)
         {
             int section;
-            if (recordLength == 4)
-            {
-                break;
-            }
 
             in.mark(10);
             int sectionLength = in.readUINT(4);
@@ -218,8 +214,6 @@ public class Grib2Record extends GribRecord
         }
 
         Grib2RecordGDS gds = gdsList.get(0);
-//        double[] xcoords = gds.getGridXCoords();
-//        double[] ycoords = gds.getGridYCoords();
 
         if (latitude < gds.lat1 || latitude > gds.lat2)
         {
@@ -235,9 +229,6 @@ public class Grib2Record extends GribRecord
 
         int j = (int) Math.round((latitude - gds.getGridLatStart()) / gds.getGridDeltaY());     // j = index_closest_latitude
         int i = (int) Math.round((longitude - gds.getGridLonStart()) / gds.getGridDeltaX());    // i = index_closest_longitude
-
-//        double closest_latitude = ycoords[index_closest_latitude];
-//        double closest_longitude = xcoords[index_closest_longitude];
 
         ScanMode scanMode = gds.scanMode;
 
