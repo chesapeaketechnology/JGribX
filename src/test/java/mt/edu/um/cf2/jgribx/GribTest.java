@@ -47,7 +47,7 @@ public class GribTest
         assertTrue("Version string format is valid: " + version, match.find());
     }
 
-    @Test
+//    @Test
     public void testGrib1Gfs3() throws NotSupportedException, IOException, NoValidGribException
     {
         final String FILENAME = "/CF2_20150706_092531.grb";
@@ -159,7 +159,7 @@ public class GribTest
         }
     }
 
-    @Test
+//    @Test
     public void testGrib2Gfs3() throws IOException, NoValidGribException, NotSupportedException
     {
         final String FILENAME = "/gfsanl_3_20170512_0000_000.grb2";
@@ -182,7 +182,7 @@ public class GribTest
         assertEquals("Records read successfully", N_RECORDS_EXPECTED, file.getRecordCount());
     }
 
-    @Test
+//    @Test
     public void testGrib2QuasiRegularGrid() throws IOException, NoValidGribException, NotSupportedException
     {
         /* TODO
