@@ -64,11 +64,9 @@ public class GribFile
      *
      * @param in input stream with GRIB content
      * @throws IOException           if stream cannot be opened etc.
-     * @throws NotSupportedException if file contains features not yet supported
      * @throws NoValidGribException  if stream does not contain a valid GRIB file
      */
-    public GribFile(InputStream in) throws IOException,
-            NotSupportedException, NoValidGribException
+    public GribFile(InputStream in) throws IOException, NoValidGribException
     {
         // note: the BufferedInputStream enables mark/reset functionality
         this(new GribInputStream(new BufferedInputStream(in)));
