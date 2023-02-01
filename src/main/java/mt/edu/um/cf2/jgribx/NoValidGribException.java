@@ -37,7 +37,6 @@ package mt.edu.um.cf2.jgribx;
  * @author Benjamin Stark
  * @version 1.0
  */
-
 public class NoValidGribException extends Exception
 {
 
@@ -55,7 +54,6 @@ public class NoValidGribException extends Exception
      */
     public NoValidGribException(String msg)
     {
-
         super(msg);
     }
 }

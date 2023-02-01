@@ -26,17 +26,28 @@ import static mt.edu.um.cf2.jgribx.Bytes2Number.INT_SM;
  */
 public class Grib2RecordDRS
 {
+    private enum CompressionType
+    {
+        LOSSLESS,
+        LOSSY,
+        RESERVED,
+        MISSING
+    }
+
     protected int binaryScaleFactor;
     protected int decimalScaleFactor;
     protected int spatialDescriptorOctets;        // Number of octets required in the data section to specify extra descriptors needed for spatial differencing
+
     /**
      * Length increment for the group lengths (see Note 14)
      */
     protected int groupLengthIncrement;
+
     /**
      * Number of bits used for the group widths (after the reference value in octet 36 has been removed)
      */
     protected int groupWidthBits;
+
     /**
      * True length of last group
      */
@@ -142,14 +153,6 @@ public class Grib2RecordDRS
                 throw new NotSupportedException("Data Representation type " + drs.packingType + " not supported");
         }
         return drs;
-    }
-
-    private enum CompressionType
-    {
-        LOSSLESS,
-        LOSSY,
-        RESERVED,
-        MISSING
     }
 
     private static CompressionType getCompressionType(int code)

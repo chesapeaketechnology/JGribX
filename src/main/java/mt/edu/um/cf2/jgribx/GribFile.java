@@ -79,15 +79,13 @@ public class GribFile
      *
      * @param in bit input stream with GRIB content
      * @throws IOException           if stream can not be opened etc.
-     * @throws NotSupportedException if file contains features not yet supported
      * @throws NoValidGribException  if stream does not contain a valid GRIB file
      */
-    public GribFile(GribInputStream in) throws IOException,
-            NotSupportedException, NoValidGribException
+    public GribFile(GribInputStream in) throws IOException, NoValidGribException
     {
         // Initialise fields
         nRecordsSkipped = 0;
-        records = new ArrayList();
+        records = new ArrayList<>();
 
         /*
          * Initialise the Parameter Tables with the information in the parameter
@@ -223,9 +221,7 @@ public class GribFile
      */
     public List<String> getParameterCodes()
     {
-        /**
-         * List of different parameters present in the GRIB file
-         */
+        //List of different parameters present in the GRIB file
         List<String> parameterList = new ArrayList();
         for (GribRecord record : records)
         {
@@ -263,7 +259,7 @@ public class GribFile
 
     public List<String> getParameterLevelDescriptions(String paramCode)
     {
-        List<String> descList = new ArrayList();
+        List<String> descList = new ArrayList<>();
         for (GribRecord record : records)
         {
             if (record.getParameterCode().equals(paramCode))
@@ -282,7 +278,7 @@ public class GribFile
 
     public List<String> getParameterLevelIdentifiers(String paramCode)
     {
-        List<String> idList = new ArrayList();
+        List<String> idList = new ArrayList<>();
         for (GribRecord record : records)
         {
             if (record.getParameterCode().equals(paramCode))
@@ -305,7 +301,7 @@ public class GribFile
      */
     public int[] getProcessIDs()
     {
-        List<Integer> idList = new ArrayList();
+        List<Integer> idList = new ArrayList<>();
         for (GribRecord record : records)
         {
             int id = record.getProcessId();
@@ -413,7 +409,7 @@ public class GribFile
      */
     public List<Calendar> getReferenceTimes()
     {
-        List<Calendar> referenceTimeList = new ArrayList();
+        List<Calendar> referenceTimeList = new ArrayList<>();
         for (GribRecord record : records)
         {
             if (!referenceTimeList.contains(record.getReferenceTime()))

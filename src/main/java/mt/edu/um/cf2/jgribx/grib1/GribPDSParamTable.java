@@ -83,10 +83,8 @@ import java.util.regex.Pattern;
  * A class containing static methods which deliver descriptions and names of
  * parameters, levels and units for byte codes from GRIB records.
  */
-
 public class GribPDSParamTable
 {
-
     /**
      * System property variable to search, or set, when using 
      * user supplied gribtab directories, and or a stand alone
@@ -151,7 +149,7 @@ public class GribPDSParamTable
     /**
      * List of parameter tables
      */
-    protected static ArrayList tables = null;
+    protected static ArrayList<GribPDSParamTable> tables = null;
 
     /**
      *  Added by Richard D. Gonzalez
@@ -165,7 +163,7 @@ public class GribPDSParamTable
     /**
      * Used to store names of files
      */
-    private static final Map fileTabMap = new HashMap();
+    private static final Map<String, GribPDSParamTable> fileTabMap = new HashMap<>();
 
     /**
      * Default constructor
@@ -192,86 +190,6 @@ public class GribPDSParamTable
         table_number = tab;
         url = null;
         parameters = par;
-    }
-
-    /**
-     * - peg - As of 2005-12-09
-     * Re-implemented static method to allow for user supplied
-     * directory structures as known from initFromJar and also to
-     * make it possible to read a single gribtab file. IE without
-     * having to create a tablelookup.lst file
-     */
-    static
-    {
-    /*
-      try
-      {
-
-    	  // Add default tables to array
-    	  GribPDSParamTable.tables = new ArrayList();
-          initDefaultTableEntries(tables);
-          initFromJAR(tables);
-
-         // Add user supplied tables too - from System.properties()
-         String gribtab = System.getProperty(PROPERTY_GRIBTABURL);
-         logger.debug("JGRIB: static: gribtab = "+gribtab);
-         
-         if (true || tables.size() == 0)
-         {
-            if (gribtab != null)
-            {
-                // Detect if supplied gribtab is pointing to a file or a directory
-                URL url = new URL(gribtab);
-                File gribTabFile = new File(url.getFile());
-                if(gribTabFile.isFile())
-                {        			
-                    // Use gribtab files supplied by user
-                    try
-                    {
-                        readTableEntry(gribTabFile.toURL(), tables);
-                        logger.debug("Using user supplied gribtab table!");
-                    }
-                    catch (IOException e)
-                    {
-                        logger.error("IOException: "+ e.getMessage());
-                    }
-                    catch (NotSupportedException e)
-                    {
-                        logger.error("NotSupportedException: "+e.getMessage());
-                    }
-
-                }
-                else {
-                    // Use gribtab files supplied by user in jar file or directory
-                    try
-                    {
-                        readTableEntries(gribtab, tables);
-                        logger.debug("Using user supplied gribtab table directory!");
-                    }
-                    catch (IOException e)
-                    {
-                            logger.error("IOException: "+ e.getMessage());
-                    }       			
-                }
-            }
-
-         }
-         else
-         {
-
-        	 // Use from jar file
-        	 logger.debug("Using gribtab table from class path (jar)");
-         }
-
-         // Make table
-         paramTables = (GribPDSParamTable[])tables.toArray(new GribPDSParamTable[tables.size()]);
-          
-      }
-      catch (IOException e)
-      {
-    	  logger.error("IOException: "+ e.getMessage());
-      }
-        */
     }
 
     /**
@@ -312,7 +230,7 @@ public class GribPDSParamTable
      * added by Tor C.Bekkvik
      * @param aTables
      */
-    private static void initDefaultTableEntries(ArrayList aTables)
+    private static void initDefaultTableEntries(ArrayList<GribPDSParamTable> aTables)
     {
         String[][] defaulttable_ncep_reanal2 =
                 {
@@ -598,7 +516,7 @@ public class GribPDSParamTable
      * @throws IOException
      * @throws NotSupportedException
      */
-    protected static void readTableEntry(URL aFileUrl, ArrayList aTables)
+    protected static void readTableEntry(URL aFileUrl, ArrayList<GribPDSParamTable> aTables)
             throws IOException, NotSupportedException
     {
         Logger.println("JGRIB: readTableEntry: aFileUrl = " + aFileUrl.toString(), Logger.DEBUG);
@@ -683,7 +601,6 @@ public class GribPDSParamTable
       */
         for (int i = paramTables.length - 1; i >= 0; i--)
         {
-//      for (int i=0; i < paramTables.length; i++){
             GribPDSParamTable table = paramTables[i];
             if (table.center_id == -1) continue;
             if (center == table.center_id)
@@ -705,7 +622,6 @@ public class GribPDSParamTable
         //search matching table  ( - ,table(1..3))
         for (int i = paramTables.length - 1; i >= 0; i--)
         {
-//      for (int i = 0; i < paramTables.length; i++){
             GribPDSParamTable table = paramTables[i];
             if (table.center_id == -1 && number == table.table_number)
             {
@@ -716,9 +632,6 @@ public class GribPDSParamTable
 
         throw new NotSupportedException("Grib table not supported; cent "
                 + center + ",sub " + subcenter + ",table " + number);
-
-//      System.out.println("cent, sub, tab: "+center+" "+subcenter+" "+number);
-//      return null;
     }
 
     /**
@@ -887,9 +800,7 @@ public class GribPDSParamTable
     /**
      * Read parameter table
      */
-    //public void readParameterTable(String aFileName)
     private void readParameterTable()
-//         throws IOException
     {
 
         if (this.parameters != null) return;
@@ -929,13 +840,7 @@ public class GribPDSParamTable
             center = Integer.parseInt(tableDefArr[1].trim());
             subcenter = Integer.parseInt(tableDefArr[2].trim());
             number = Integer.parseInt(tableDefArr[3].trim());
-//      if (center != center_id && subcenter != subcenter_id &&
-//         number!= table_number){
-//         throw new java.io.IOException("parameter table header values do not " +
-//               " match values in GRIB file.  Possible error in lookup table.");
-//      }
 
-            //int i=0;  // peg - Variable never used
             // rdg - added the 0 line length check to cover the case of blank lines at
             //       the end of the parameter table file.
             while ((line = br.readLine()) != null)
@@ -958,9 +863,8 @@ public class GribPDSParamTable
                     parameter.description = arr2[0].trim();
                     // Remove "]"
                     parameter.units = arr2[1].substring(0, arr2[1].lastIndexOf(']')).trim();
-//            parameter.unit = arr2[1].substring(0, arr2[1].lastIndexOf(']')).trim();
                 }
-                //this.parameters[i++]=parameter;
+
                 if (!this.setParameter(parameter))
                 {
                     Logger.println("Warning, bad parameter ignored (" + filename + "): " + parameter, Logger.ERROR);
@@ -982,14 +886,21 @@ public class GribPDSParamTable
     @Override
     public String toString()
     {
-        StringBuffer str = new StringBuffer();
-        str.append("-1:" + center_id + ":" + subcenter_id + ":" + table_number + "\n");
+        StringBuilder str = new StringBuilder();
+        str.append("-1:").append(center_id)
+                .append(":")
+                .append(subcenter_id)
+                .append(":")
+                .append(table_number)
+                .append("\n");
+
         if (parameters != null)
         {
-            for (int i = 0; i < parameters.length; i++)
+            for (Grib1Parameter parameter : parameters)
             {
-                if (parameters[i] == null) continue;
-                str.append(parameters[i].toString() + "\n");
+                if (parameter == null) continue;
+                str.append(parameter)
+                        .append("\n");
             }
         }
         return str.toString();

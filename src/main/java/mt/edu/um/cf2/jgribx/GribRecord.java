@@ -22,7 +22,7 @@ public abstract class GribRecord
 
     public static GribRecord readFromStream(GribInputStream in) throws IOException, NotSupportedException, NoValidGribException
     {
-        GribRecord record = null;
+        GribRecord record;
 
         GribRecordIS is = GribRecordIS.readFromStream(in);
         if (is == null) return null;
@@ -45,10 +45,7 @@ public abstract class GribRecord
             throw new NoValidGribException("Grib End Section is invalid");
         }
 
-        if (record != null)
-        {
-            record.is = is;
-        }
+        record.is = is;
         return record;
     }
 

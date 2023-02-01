@@ -29,9 +29,6 @@ import java.io.IOException;
 
 public class GribGDSPolarStereo extends Grib1RecordGDS
 {
-
-    /* start of attributes unique to the Polar Stereo GDS */
-
     /**
      * Projection Center Flag.
      */
@@ -58,8 +55,6 @@ public class GribGDSPolarStereo extends Grib1RecordGDS
      * Latitude of Center - assumed 60 N or 60 S based on note 2 of table D
      */
     protected double latitude_ts = 60.0;  //true scale
-
-    // *** constructors *******************************************************
 
     /**
      * Constructs a <tt>GribRecordGDS</tt> object from a bit input stream.
@@ -136,19 +131,11 @@ public class GribGDSPolarStereo extends Grib1RecordGDS
         prepProjection();
     }
 
-    // *** public methods **************************************************************
-
-    /**
-     * @see net.sourceforge.jgrib.GribRecordGDS#isUVEastNorth()
-     */
     public boolean isUVEastNorth()
     {
         return (grid_mode & 0x08) == 0;
     }
 
-    /**
-     * @see net.sourceforge.jgrib.GribRecordGDS#compare(net.sourceforge.jgrib.GribRecordGDS)
-     */
     public int compare(Grib1RecordGDS gds)
     {
         if (this.equals(gds))
@@ -179,7 +166,6 @@ public class GribGDSPolarStereo extends Grib1RecordGDS
 
     /**
      * Overides method from GribRecordGDS
-     * @see net.sourceforge.jgrib.GribRecordGDS#hashCode
      * @return integer value of hashCode
      */
     public int hashCode()
@@ -196,9 +182,7 @@ public class GribGDSPolarStereo extends Grib1RecordGDS
 
     /**
      * Method overrides GribRecordGDS.equals, which in turn overrides
-     * the default Object.equals method.
-     *
-     * @see net.sourceforge.jgrib.GribRecordGDS#equals(java.lang.Object)
+     * the default Object.equals() method.
      * @return true/false if objects are equal
      */
     public boolean equals(Object obj)
@@ -412,14 +396,12 @@ public class GribGDSPolarStereo extends Grib1RecordGDS
      * U.S. Geological Survey Professional Paper 1395, 1987
      * Maintained his symbols, so the code matches his work.
      * Somewhat hard to follow, if interested, suggest looking up quick reference
-     * at http://mathworld.wolfram.com/LambertConformalConicProjection.html
+     * at <a href="http://mathworld.wolfram.com/LambertConformalConicProjection.html">...</a>
      *
      * Origin is where Lov intersects 60 degrees (from note 2 of Table D) north
      * or south (determined by bit 1 of the Projection Center Flag).
      *
      * This assumes a central scale factor of 1.
-     *
-     * @return latitide/longitude as doubles
      */
     private void prepProjection()
     {
@@ -453,16 +435,14 @@ public class GribGDSPolarStereo extends Grib1RecordGDS
      * U.S. Geological Survey Professional Paper 1395, 1987
      * Maintained his symbols, so the code matches his work.
      * Somewhat hard to follow, if interested, suggest looking up quick reference
-     * at http://mathworld.wolfram.com/PolarStereoConicProjection.html
+     * at <a href="http://mathworld.wolfram.com/PolarStereoConicProjection.html">...</a>
      *
      * assumes scale factor of 1.0
      *
      * rdg - may not be correct yet - did not align with display software I
      * was using, but they implemented using a center point, vice LOV
      * TODO verify projection implementation
-     *
-     * @see net.sourceforge.jgrib.GribRecordGDS#getGridCoords()
-     * @return longitide/latitude as doubles
+     * @return longitude/latitude as doubles
      */
     public double[] getGridCoords()
     {
@@ -504,7 +484,7 @@ public class GribGDSPolarStereo extends Grib1RecordGDS
     /**
      * @return Value of x start point as double
      */
-    public double getGrid_startx()
+    public double getGrid_startX()
     {
         return grid_startx;
     }
@@ -512,7 +492,7 @@ public class GribGDSPolarStereo extends Grib1RecordGDS
     /**
      * @return Value of y start point as double
      */
-    public double getGrid_starty()
+    public double getGrid_startY()
     {
         return grid_starty;
     }

@@ -23,6 +23,7 @@ public abstract class Grib2RecordGDS
     protected double lon1;
     protected double lon2;
     protected int length;
+
     /**
      * Number of data points
      */

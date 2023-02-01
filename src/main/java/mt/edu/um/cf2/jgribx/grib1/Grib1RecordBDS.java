@@ -27,7 +27,6 @@ import java.util.Arrays;
 
 public class Grib1RecordBDS
 {
-
     /**
      * Constant value for an undefined grid value.
      */
@@ -75,8 +74,6 @@ public class Grib1RecordBDS
      * -  Octet 12 is empty, and the data is represented by the reference value.
      */
     protected boolean isConstant = false;
-
-    // *** constructors *******************************************************
 
     /**
      * Constructs a <tt>GribRecordBDS</tt> object from a bit input stream.
@@ -205,8 +202,6 @@ public class Grib1RecordBDS
         in.seekNextByte();
         in.skip(unusedBits / 8);
     }
-
-    // *** public methods *********************************************************
 
     /**
      * Get the length in bytes of this section.

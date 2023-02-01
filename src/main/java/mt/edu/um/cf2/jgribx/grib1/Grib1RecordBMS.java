@@ -24,10 +24,8 @@ import java.util.Arrays;
  * @author Benjamin Stark
  * @version 1.0
  */
-
 public class Grib1RecordBMS
 {
-
     /**
      * Length in bytes of this section.
      */
@@ -37,8 +35,6 @@ public class Grib1RecordBMS
      * The bit map.
      */
     protected boolean[] bitmap;
-
-    // *** constructors *******************************************************
 
     /**
      * Constructs a <tt>GribRecordBMS</tt> object from a bit input stream.
@@ -79,8 +75,6 @@ public class Grib1RecordBMS
             this.bitmap[i] = (octets[i / 8 + 3] & bitmask[i % 8]) != 0;
         }
     }
-
-    // *** public methods *********************************************************
 
     /**
      * Get length in bytes of this section.

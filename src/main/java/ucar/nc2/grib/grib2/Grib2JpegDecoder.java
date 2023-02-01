@@ -94,10 +94,7 @@ public class Grib2JpegDecoder
         argv[5] = "on";
 
         // Initialize default parameters
-        // System.err.println("calling Grib2JpegDecoder with argv argument");
-        /*
-         * The default parameter list (with modules arguments)
-         */
+        // The default parameter list (with modules arguments)
         ParameterList defpl = new ParameterList();
         String[][] param = Grib2JpegDecoder.getAllParameters();
 
@@ -120,7 +117,7 @@ public class Grib2JpegDecoder
         {
             System.err.format("An error occurred while parsing the arguments: %s", e.getMessage());
         }
-    } // end Grib2JpegDecoder constructor
+    }
 
     /**
      * Returns the exit code of the class. This is only initialized after the
@@ -148,7 +145,6 @@ public class Grib2JpegDecoder
      */
     public void decode(byte[] buf) throws IOException
     {
-        // int dataSize = buf.length;
         boolean verbose = false;
         int res; // resolution level to reconstruct
         FileFormatReader ff;
@@ -158,7 +154,6 @@ public class Grib2JpegDecoder
         Dequantizer deq;
         InverseWT invWT;
         InvCompTransf ictransf;
-        // ImgWriter imwriter[];
         ImgDataConverter converter;
         DecoderSpecs decSpec;
         BlkImgDataSrc palettized;
@@ -193,7 +188,7 @@ public class Grib2JpegDecoder
             // **** Header decoder ****
             // Instantiate header decoder and read main header
             /*
-             * Information contained in the codestream's headers
+             * Information contained in the code stream's headers
              */
             HeaderInfo hi = new HeaderInfo();
             try
@@ -363,7 +358,7 @@ public class Grib2JpegDecoder
                   }
                     return;
                 }
-            } // end for(i=0; i<imwriter.length; i++)
+            }
 
             // **** Print some resulting info ****
             if (verbose)
@@ -402,7 +397,7 @@ public class Grib2JpegDecoder
         {
             throw new IOException(e);
         }
-    } // end decode
+    }
 
     private void error(String msg, int code)
     {
@@ -555,7 +550,6 @@ public class Grib2JpegDecoder
      */
     private static class ImgWriterArray extends ImgWriter
     {
-
         /**
          * Whether the data must be signed when writing or not. In the latter
          * case inverse level shifting must be applied
@@ -677,29 +671,26 @@ public class Grib2JpegDecoder
                 // A new one will be allocated by getInternCompData()
                 db.data = null;
             }
-            // Request the data and make sure it is not
-            // progressive
+            // Request the data and make sure it is not progressive
             do
             {
                 db = (DataBlkInt) src.getInternCompData(db, c);
             } while (db.progressive);
-        } // end int ulx, int uly, int w, int h
+        }
 
         public void writeAll()
         {
             // Find the list of tile to decode.
             Coord nT = src.getNumTiles(null);
 
-            // Loop on vertical tiles
             for (int y = 0; y < nT.y; y++)
             {
-                // Loop on horizontal tiles
                 for (int x = 0; x < nT.x; x++)
                 {
                     src.setTile(x, y);
                     write(0, 0, src.getImgWidth(), src.getImgHeight());
-                } // End loop on horizontal tiles
-            } // End loop on vertical tiles
+                }
+            }
         }
 
         /**
@@ -724,7 +715,7 @@ public class Grib2JpegDecoder
             // Write in strips
             for (i = 0; i < th; i += DEF_STRIP_HEIGHT)
             {
-                write(0, i, tw, (th - i < DEF_STRIP_HEIGHT) ? th - i : DEF_STRIP_HEIGHT);
+                write(0, i, tw, Math.min(th - i, DEF_STRIP_HEIGHT));
             }
         }
 
@@ -754,10 +745,6 @@ public class Grib2JpegDecoder
         public String toString()
         {
             return "ImgWriterArray instance (isSigned: " + isSigned + ")";
-      /*
-      return MoreObjects.toStringHelper(this).add("isSigned", isSigned).add("bitDepth", bitDepth).add("component", c)
-          .add("w", w).add("h", h).toString();
-       */
         }
-    } // end ImgWriterArray
-} // end Grib2JpegDecoder
+    }
+}

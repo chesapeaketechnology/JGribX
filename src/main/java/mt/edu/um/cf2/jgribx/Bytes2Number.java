@@ -21,12 +21,12 @@ import java.util.Arrays;
  * @author Benjamin Stark
  * @version 1.0
  */
-
 public class Bytes2Number
 {
     /**
      * Integer (Sign & Magnitude)
      */
+
     public static final int INT_SM = 1;
     /**
      * Integer (Two's Complement)
@@ -104,7 +104,7 @@ public class Bytes2Number
      * @param bytes
      * @param format
      * @return a single value as a single precision IEEE754 float
-     * @see https://en.wikipedia.org/wiki/IBM_Floating_Point_Architecture
+     * @see <a href="https://en.wikipedia.org/wiki/IBM_Floating_Point_Architecture">Link</a>
      */
     public static float bytesToFloat(byte[] bytes, int format)
     {
@@ -202,10 +202,6 @@ public class Bytes2Number
      */
     public static float float4(int a, int b, int c, int d)
     {
-       /*
-        byte test[] = {(byte)a, (byte) b, (byte) c, (byte) d};
-        return ByteBuffer.wrap(test).getFloat();
-        */
         int sgn, mant, exp;
 
         mant = b << 16 | c << 8 | d;

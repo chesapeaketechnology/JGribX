@@ -30,10 +30,7 @@ import java.io.IOException;
 public class Grib1GDSLatLon extends Grib1RecordGDS
 {
 
-    // Attributes for Lat/Lon grid not included in GribRecordGDS
-
-    // None!  The Lat/Lon grid is the most basic, and all attributes match
-    //   the original GribRecordGDS
+    // Attributes for Lat/Lon grid not included in GribRecordGDS.
 
     /**
      * Constructs a <tt>GribRecordGDS</tt> object from a bit input stream.
@@ -43,10 +40,9 @@ public class Grib1GDSLatLon extends Grib1RecordGDS
      * @param in bit input stream with GDS content
      * @throws IOException           if stream can not be opened etc.
      * @throws NoValidGribException  if stream contains no valid GRIB file
-     * @throws NotSupportedException
      */
     public Grib1GDSLatLon(GribInputStream in)
-            throws IOException, NoValidGribException, NotSupportedException
+            throws IOException, NoValidGribException
     {
         super(in.read(6));
 
@@ -71,26 +67,23 @@ public class Grib1GDSLatLon extends Grib1RecordGDS
         // octet 17 (resolution and component flags -> 128 == 0x80 == increments given.)
         grid_mode = in.readUINT(1);
 
-        /*
-        TABLE 7 - RESOLUTION AND COMPONENT FLAGS
-     (GDS Octet 17)
+    /*
+    TABLE 7 - RESOLUTION AND COMPONENT FLAGS
+    (GDS Octet 17)
 
      Bit 		Value 		Meaning
-     1	0	Direction increments not given
-        1	Direction increments given
+     1	        0	        Direction increments not given
+                1	        Direction increments given
 
-     2	0	Earth assumed spherical with radius = 6367.47 km
-        1	Earth assumed oblate spheroid with size
-           as determined by IAU in 1965:
-           6378.160 km, 6356.775 km, f = 1/297.0
-
+     2	        0	        Earth assumed spherical with radius = 6367.47 km
+                1	        Earth assumed oblate spheroid with size as determined by IAU in 1965: 6378.160 km, 6356.775 km, f = 1/297.0
      3-4		reserved (set to 0)
-
-     5	0	u- and v-components of vector quantities resolved relative to easterly and northerly directions
-        1	u and v components of vector quantities resolved relative to the defined grid in the direction of increasing x and y (or i and j) coordinates respectively
+     5	        0	        u- and v-components of vector quantities resolved relative to easterly and northerly directions
+                1	        u and v components of vector quantities resolved relative to the defined grid in the direction of increasing x and y (or i and j) coordinates respectively
 
      6-8		reserved (set to 0)
-        */
+     */
+
         // octets 18-20 (latitude of last grid point)
         grid_lat2 = in.readINT(3, Bytes2Number.INT_SM) / 1000.0;
 

@@ -28,6 +28,20 @@
  * Heavily modified by Richard D. Gonzalez to conform to GribGDSFactory
  * implementation - 4 Sep 02
  * Implements GDS Table D for Lambert grid
+ * <p>
+ * GribGDSLambert.java  1.0  10/01/2002
+ * <p>
+ * based on GribRecordGDS (C) Benjamin Stark
+ * Heavily modified by Richard D. Gonzalez to conform to GribGDSFactory
+ * implementation - 4 Sep 02
+ * Implements GDS Table D for Lambert grid
+ * <p>
+ * GribGDSLambert.java  1.0  10/01/2002
+ * <p>
+ * based on GribRecordGDS (C) Benjamin Stark
+ * Heavily modified by Richard D. Gonzalez to conform to GribGDSFactory
+ * implementation - 4 Sep 02
+ * Implements GDS Table D for Lambert grid
  */
 
 /**
@@ -61,9 +75,6 @@ import java.io.IOException;
 
 public class GribGDSLambert extends Grib1RecordGDS
 {
-
-    /* start of attributes unique to the Lambert GDS */
-
     /**
      * Projection Center Flag.
      */
@@ -180,7 +191,6 @@ public class GribGDSLambert extends Grib1RecordGDS
         if ((this.grid_scan & 128) != 0) this.grid_dx = -this.grid_dx;
 // rdg - changed to != 64 here because table 8 shows -j if bit NOT set
         if ((this.grid_scan & 64) != 64) this.grid_dy = -this.grid_dy;
-//         if ((this.grid_scan & 64) != 0) this.grid_dy = -this.grid_dy;
 
         // octets 29-31 (Latin1 - first lat where secant cone cuts spherical earth)
         this.grid_latin1 = Bytes2Number.int3(data[22], data[23], data[24]) / 1000.0;
@@ -198,19 +208,11 @@ public class GribGDSLambert extends Grib1RecordGDS
         prepProjection();
     }
 
-    // *** public methods **************************************************************
-
-    /**
-     * @see net.sourceforge.jgrib.GribRecordGDS#isUVEastNorth()
-     */
     public boolean isUVEastNorth()
     {
         return (grid_mode & 0x08) == 0;
     }
 
-    /**
-     * @see net.sourceforge.jgrib.GribRecordGDS#compare(net.sourceforge.jgrib.GribRecordGDS)
-     */
     public int compare(Grib1RecordGDS gds)
     {
         if (this.equals(gds))
@@ -240,8 +242,7 @@ public class GribGDSLambert extends Grib1RecordGDS
     }
 
     /**
-     * Overides method from GribRecordGDS
-     * @see net.sourceforge.jgrib.GribRecordGDS#hashCode
+     * Overrides method from GribRecordGDS
      * @return integer value of hashCode
      */
     public int hashCode()
@@ -257,10 +258,7 @@ public class GribGDSLambert extends Grib1RecordGDS
     }
 
     /**
-     * Method overrides GribRecordGDS.equals, which in turn overrides
-     * the default Object.equals method.
-     *
-     * @see net.sourceforge.jgrib.GribRecordGDS#equals(java.lang.Object)
+     * Method overrides GribRecordGDS.equals, which in turn overrides the default Object.equals() method.
      * @return true/false if objects are equal
      */
     public boolean equals(Object obj)
@@ -481,31 +479,6 @@ public class GribGDSLambert extends Grib1RecordGDS
     }
 
     /**
-     * Get all longitide coordinates
-     * @returns longtitude as double
-     */
-
-// doesn't work yet - need to create a projToLL method and convert each point
-/*   public double[] getXLons()
-   {
-      // alloc
-      double[] coords = new double[grid_nx];
-
-      int k = 0;
-
-      for (int x = 0; x < grid_nx; x++)
-      {
-         double longi = grid_lon1 + x * grid_dx;
-         // move x-coordinates to the range -180..180
-         if (longi >= 180.0) longi = longi - 360.0;
-         if (longi < -180.0) longi = longi + 360.0;
-         coords[k++] = longi;
-      }
-      return coords;
-   }
-*/
-
-    /**
      * Get all x Axis grid coordinates
      * @return array of coordinates in the LC projection for the x axis.
      * These are the LC coordinates that equate to the Longitudes along the x axis.
@@ -526,30 +499,6 @@ public class GribGDSLambert extends Grib1RecordGDS
         }
         return xCoords;
     }
-
-    /**
-     * Get y Axis grid coordinates
-     * @returns latitude as double
-     */
-
-// doesn't work yet - need to create a projToLL method and convert each point
-/*   public double[] getYLats()
-   {
-      // alloc
-      double[] coords = new double[grid_ny];
-
-      int k = 0;
-
-      for (int y = 0; y < grid_ny; y++)
-      {
-         double lati = grid_lat1 + y * grid_dy;
-//         if (lati > 90.0 || lati < -90.0)
-//            System.err.println("GribGDSLambert: latitude out of range (-90 to 90).");
-//         coords[k++] = lati;
-      }
-      return coords;
-   }
-*/
 
     /**
      * Get all y Axis grid coordinates
@@ -581,7 +530,7 @@ public class GribGDSLambert extends Grib1RecordGDS
      * U.S. Geological Survey Professional Paper 1395, 1987
      * Maintained his symbols, so the code matches his work.
      * Somewhat hard to follow, if interested, suggest looking up quick reference
-     * at http://mathworld.wolfram.com/LambertConformalConicProjection.html
+     * at <a href="http://mathworld.wolfram.com/LambertConformalConicProjection.html">...</a>
      *
      * Origin is where Lov intersects Latin1.
      *
@@ -589,8 +538,6 @@ public class GribGDSLambert extends Grib1RecordGDS
      *        closest to the pole.  In the mathematical formulas, the first
      *        standard parallel is the one closest to the equator.  Therefore,
      *        the math looks backwards here, but it isn't.
-     *
-     * @returns latitide/longitude as doubles
      */
     private void prepProjection()
     {
@@ -637,8 +584,6 @@ public class GribGDSLambert extends Grib1RecordGDS
      *        closest to the pole.  In the mathematical formulas, the first
      *        standard parallel is the one closest to the equator.  Therefore,
      *        the math looks backwards here, but it isn't.
-     *
-     * @see net.sourceforge.jgrib.GribRecordGDS#getGridCoords()
      * @return latitide/longitude as doubles
      */
     public double[] getGridCoords()
@@ -657,9 +602,6 @@ public class GribGDSLambert extends Grib1RecordGDS
 
         double[] coords;
         pi2 = Math.PI / 2;
-        //pi4=Math.PI/4;
-        //latin1r = Math.toRadians(grid_latin1);
-        //latin2r = Math.toRadians(grid_latin2);
 
         // need space for a lat and lon for each grid point
         coords = new double[grid_ny * grid_nx * 2];

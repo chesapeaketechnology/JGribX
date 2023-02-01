@@ -153,26 +153,11 @@ public class SmartStringArray
 
         do
         {
-            //String sub = string.substring( previousLoc, loc );
-         /*
-         if (sub.trim().length() > 0)
-         {
-            ssa.add(sub);
-         }
-         */
             ssa.add(string.substring(previousLoc, loc));
             previousLoc = (loc + token.length());
             loc = string.indexOf(token, previousLoc);
         }
         while ((loc != -1) && (previousLoc < string.length()));
-
-        //String sub = string.substring( previousLoc);
-      /*
-      if (sub.trim().length() > 0)
-      {
-         ssa.add(sub);
-      }
-      */
         ssa.add(string.substring(previousLoc));
 
         return (ssa.toArray());
@@ -187,7 +172,6 @@ public class SmartStringArray
     public static String[] removeBlanks(String[] inArr)
     {
         // Count number of non blanks
-
         int nonBl = 0;
         for (int i = 0; i < inArr.length; i++)
         {
@@ -206,9 +190,9 @@ public class SmartStringArray
         // Copy to new
         String[] outArr = new String[nonBl];
         nonBl = 0;
-        for (int i = 0; i < inArr.length; i++)
+        for (String s : inArr)
         {
-            String inStr = inArr[i].trim();
+            String inStr = s.trim();
             if (inStr.length() != 0)
             {
                 outArr[nonBl] = inStr;
@@ -226,7 +210,7 @@ public class SmartStringArray
      */
     public static String join(String token, String[] strings)
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         for (int x = 0; x < strings.length; x++)
         {

@@ -22,7 +22,6 @@ package mt.edu.um.cf2.jgribx.grib1;
 
 public class Grib1Parameter
 {
-
     /**
      * Parameter number [0 - 255]
      */
@@ -161,9 +160,6 @@ public class Grib1Parameter
 
         return 1;
     }
-
-    /**************************************************************************/
-    /* Static Methods */
 
     /**
      * @param version

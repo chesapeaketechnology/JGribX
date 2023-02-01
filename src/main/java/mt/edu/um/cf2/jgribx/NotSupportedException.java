@@ -39,9 +39,7 @@ package mt.edu.um.cf2.jgribx;
 
 /**
  * A class that represents an exception thrown when a GRIB feature is not
- * (yet) supported.
- *
- * Currently, only GRIB edition 1 is supported
+ * (yet) supported. Currently, only GRIB edition 1 is supported
  *
  * @author Richard D. Gonzalez
  * @version 1.0
@@ -64,7 +62,6 @@ public class NotSupportedException extends Exception
      */
     public NotSupportedException(String msg)
     {
-
         super(msg);
     }
 }

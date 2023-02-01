@@ -29,7 +29,6 @@ package mt.edu.um.cf2.jgribx.grib1;
  */
 public class Grib1Level
 {
-
     /**
      * Index number from table 3 - can be used for comparison even if the
      * description of the level changes
@@ -398,9 +397,6 @@ public class Grib1Level
                 break;
             default:
                 level = null;
-//                level.name = level.description = "undefined level";
-//                level.units = "undefined units";
-//                Logger.println("GribPDSLevel: Table 3 level " + level.index + " is not implemented yet", Logger.WARNING);
                 break;
         }
         return level;

@@ -71,12 +71,7 @@ public class Grib2RecordGDSLatLon extends Grib2RecordGDS
             }
         }
         /* [72] Scanning Mode */
-//        int scanMode = in.readUINT(1);
         scanMode = new ScanMode((byte) in.readUINT(1));
-//        boolean iPositiveDirection = (scanMode & 0x80) != 0x80;
-//        boolean jPositiveDirection = (scanMode & 0x40) == 0x40;
-//        iDirectionConsecutive = (scanMode & 0x20) != 0x20;
-//        rowsZigzag = (scanMode & 0x10) == 0x10;
         if (!scanMode.iDirectionPositive) gridDi *= -1;
         if (!scanMode.jDirectionPositive) gridDj *= -1;
 

@@ -32,7 +32,6 @@ import java.util.Calendar;
 
 public class Grib1Record extends GribRecord
 {
-
     /**
      * The indicator section.
      */
@@ -58,7 +57,6 @@ public class Grib1Record extends GribRecord
      */
     protected Grib1RecordBDS bds;
 
-    // *** constructors ************************************************************
     public Grib1Record()
     {
     }
@@ -135,8 +133,6 @@ public class Grib1Record extends GribRecord
 
         return record;
     }
-
-    // *** public methods ******************************************************
 
     /**
      * Get the bitmap section of this GRIB record.

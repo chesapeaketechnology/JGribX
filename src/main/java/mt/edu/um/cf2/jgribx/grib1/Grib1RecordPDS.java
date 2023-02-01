@@ -116,7 +116,7 @@ public class Grib1RecordPDS
     private GribPDSParamTable parameter_table;
 
     /**
-     * Constructs a {@link GribRecordPDS} object from a bit input stream.
+     * Constructs a {@link Grib1RecordPDS} object from a bit input stream.
      *
      * @param in bit input stream with PDS content
      * @throws IOException           if stream can not be opened etc.
@@ -215,8 +215,6 @@ public class Grib1RecordPDS
             throw new NotSupportedException("Unsupported Parameter " + parameterId + " in Table " + tableVersion);
         }
 
-        /* Level */
-//      this.level = GribTables.getLevel(data[6], data[7], data[8]);
         level = Grib1Level.getLevel(levelType, levelData);
 
         // octets 13-17 (base time of forecast in UTC)
@@ -592,7 +590,6 @@ public class Grib1RecordPDS
      */
     public Calendar getGMTBaseTime()
     {
-
         Calendar gmtTime = (Calendar) baseTime.clone();
         // hopefully this DST offset adjusts to DST automatically
         int dstOffset = gmtTime.get(Calendar.DST_OFFSET) / 3600000;

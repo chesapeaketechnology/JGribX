@@ -10,6 +10,8 @@
  */
 package mt.edu.um.cf2.jgribx;
 
+import java.util.Comparator;
+
 /**
  * A comparator class used with HashSet-s when storing/sorting Records as
  * they are read.
@@ -23,9 +25,6 @@ package mt.edu.um.cf2.jgribx;
  * @author Capt Richard D. Gonzalez
  * @version 1.0
  */
-
-import java.util.Comparator;
-//import java.util.Calendar;
 
 /**
  * @author rdg

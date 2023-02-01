@@ -39,7 +39,7 @@ public class GribInputStream extends FilterInputStream
     /**
      * A byte counter which can be used to keep track of the number of bytes read
      */
-//   private int countBytes;
+   private int countBytes;
 
     private long countBits;
 
@@ -89,7 +89,6 @@ public class GribInputStream extends FilterInputStream
         if (bitPos != 0)
         {
             countBits += bitPos;
-//            System.out.println("countBits += "+bitPos);
             bitPos = 0;
         }
     }

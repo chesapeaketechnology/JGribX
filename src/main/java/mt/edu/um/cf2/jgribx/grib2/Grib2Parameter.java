@@ -30,7 +30,7 @@ public class Grib2Parameter
     private final String desc;
     private final String units;
 
-    private static final List<Grib2Parameter> paramList = new ArrayList();
+    private static final List<Grib2Parameter> paramList = new ArrayList<>();
     private static boolean defaultLoaded = false;
 
     public Grib2Parameter(ProductDiscipline discipline, ParameterCategory category, int index, String abbrev, String desc, String units)

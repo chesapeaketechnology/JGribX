@@ -68,7 +68,6 @@ import java.util.Arrays;
 
 public abstract class Grib1RecordGDS
 {
-
     protected double latitudeFirst;
     protected double latitudeLast;
     protected double longitudeFirst;
@@ -144,9 +143,8 @@ public abstract class Grib1RecordGDS
      */
     protected int grid_scan;
 
-    // rdg - the remaining coordinates are not common to all types, and as such
-    //    should be removed.  They are left here (temporarily) for continuity.
-    //    These should be implemented in a GribGDSxxxx child class.
+    // rdg - the remaining coordinates are not common to all types, and as such should be removed.
+    // They are left here (temporarily) for continuity. These should be implemented in a GribGDSxxxx child class.
 
     /**
      * y-coordinate/latitude of south pole of a rotated lat/lon grid.
@@ -163,7 +161,6 @@ public abstract class Grib1RecordGDS
      */
     protected double grid_rotang;
 
-    // *** constructors *******************************************************
     public Grib1RecordGDS(GribInputStream in) throws IOException
     {
         /* [1-3] Length of section in octets */
@@ -200,9 +197,6 @@ public abstract class Grib1RecordGDS
                 break;
             case 1:
                 throw new NotSupportedException("Mercator projection is not yet supported");
-//            case 3:
-//                gds = new GribGDSLambert(in, header);
-//                break;
             default:
                 throw new NotSupportedException("Unknown GDS type: " + type);
         }
@@ -216,7 +210,6 @@ public abstract class Grib1RecordGDS
      *               GribGDSFactory
      *               <p>
      *               exceptions are thrown in children and passed up
-     * @see net.sourceforge.jgrib.GribGDSFactory#getGDS(BitInputStream)
      */
     public Grib1RecordGDS(byte[] header)
     {
@@ -227,21 +220,17 @@ public abstract class Grib1RecordGDS
 
         // octet 4 (number of vertical coordinate parameters) and
         // octet 5 (octet location of vertical coordinate parameters
-        // not implemented yet
+        // TODO: not implemented yet
 
         // octet 6 (grid type)
         this.grid_type = Bytes2Number.bytesToUint(header[5]);
     }
 
-// *** public methods **************************************************************
+    // rdg - the basic getters can remain here, but other functionality should  be moved to the child GribGDSxxxx classes.
+    // For now, overriding these methods will work just fine.
 
-    // rdg - the basic getters can remain here, but other functionality should
-    //    be moved to the child GribGDSxxxx classes.  For now, overriding these
-    //    methods will work just fine.
-
-    // peg - turned all common methods into abstract methods, so it will become
-    //       easier to subclass with a new GDS type class, this way it's much
-    //       more clear which methods is standard for all GDS types
+    // peg - turned all common methods into abstract methods, so it will become easier to subclass with a new GDS type
+    // class, this way it's much more clear which methods is standard for all GDS types
 
     /**
      * Get length in bytes of this section.

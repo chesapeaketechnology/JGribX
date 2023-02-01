@@ -151,20 +151,6 @@ public class Grib2RecordDS
             return data;
         }
 
-        // Get reference values for groups
-        ///////////////////////////////////////
-        /////// TESTING ONLY
-//        in.seekNextByte();
-//        int y1;
-//        while ((y1 = in.readUINT(1)) == 0)
-//            in.mark(1);
-//        int y2 = in.readUINT(1);
-//        System.out.println("Values: "+y1+" "+y2);
-//        in.reset();
-//        int y3 = (int) in.readUBits(1);
-//        in.seekNextByte();
-//        int y4 = (int) in.readUBits(4);
-        ///////////////////////////////////////
         int[] X1 = new int[NG];
         if (drs.nBits != 0)
         {

@@ -45,24 +45,16 @@ import java.util.List;
 /**
  * A class containing methods which deliver descriptions and names of
  * parameters, levels and units for byte codes from GRIB records.
- * @deprecated Implemetation now is supported by GribPDSParameter
+ * @deprecated Implementation now is supported by GribPDSParameter
  */
 @Deprecated
 public class GribTab implements Comparable
 {
-    /**
-     *
-     */
     private final String resource;
     /**
      * Identification of center e.g. 88 for Oslo
      */
     private int center_id;
-
-    /**
-     * Identification of sub center (-1 if irrelevant)
-     */
-    //protected int subcenter_id;
 
     /**
      * Table identification
@@ -76,7 +68,7 @@ public class GribTab implements Comparable
      */
     private static int cdif(int d)
     {
-        d = (d > 0) ? 1 : (d < 0 ? -1 : 0);
+        d = Integer.compare(d, 0);
         return d;
     }
 
