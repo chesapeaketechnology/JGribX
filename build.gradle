@@ -11,8 +11,8 @@ plugins {
     id "maven-publish"
 }
 
+group = 'mt.edu.um.cf2'
 version = '0.6.0-SNAPSHOT'
-group 'mt.edu.um.cf2'
 
 apply from: "gradle/versions.gradle"
 
