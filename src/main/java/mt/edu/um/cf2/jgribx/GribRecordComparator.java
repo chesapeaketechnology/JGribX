@@ -4,70 +4,70 @@
  * ============================================================================
  * Written by Andrew Spiteri <andrew.spiteri@um.edu.mt>
  * Adapted from JGRIB: http://jgrib.sourceforge.net/
- * 
+ *
  * Licensed under MIT: https://github.com/spidru/JGribX/blob/master/LICENSE
  * ============================================================================
  */
 package mt.edu.um.cf2.jgribx;
 
-/**
-  * A comparator class used with HashSet-s when storing/sorting Records as
-  * they are read.
-  *
-  * Compares numerous features from the record information to sort according
-  * to a time, level, level-type, y-axis, x-axis order
-  *
-  * Not implemented yet, and may not be.  Might be used when dealing with
-  * multiple files that need to serve as single file.
-  *
-  * @author Capt Richard D. Gonzalez
-  * @version 1.0
-  */
 import java.util.Comparator;
-//import java.util.Calendar;
 
+/**
+ * A comparator class used with HashSet-s when storing/sorting Records as
+ * they are read.
+ * <p>
+ * Compares numerous features from the record information to sort according
+ * to a time, level, level-type, y-axis, x-axis order
+ * <p>
+ * Not implemented yet, and may not be.  Might be used when dealing with
+ * multiple files that need to serve as single file.
+ *
+ * @author Capt Richard D. Gonzalez
+ * @version 1.0
+ */
 
 /**
  * @author rdg
  *
  */
-public class GribRecordComparator implements Comparator {
-   /**
-    * Method required to implement Comparator.
-    * If obj1 is less than obj2, return -1, if equal, return 0, else return 1
-    * @param obj1 
-    * @param obj2 
-    * @return Integer value as result of compare operation 
-    */
-   @Override
-   public int compare(Object obj1, Object obj2){
-	  
-	  // - peg - uncomment the variables, if long detailed check is re-implemented 
-      //float z1;
-      //float z2;
-      //String levelType1;
-      //String levelType2;
-      //int gridSize1;
-      //int gridSize2;
-      //Calendar time1;
-      //Calendar time2;
-      GribRecord gr1;
-      GribRecord gr2;
-      //GribRecordPDS pds1;
-      //GribRecordPDS pds2;
-      //GribPDSLevel level1;
-      //GribPDSLevel level2;
-      //int check;
+public class GribRecordComparator implements Comparator
+{
+    /**
+     * Method required to implement Comparator.
+     * If obj1 is less than obj2, return -1, if equal, return 0, else return 1
+     * @param obj1
+     * @param obj2
+     * @return Integer value as result of compare operation
+     */
+    @Override
+    public int compare(Object obj1, Object obj2)
+    {
 
+        // - peg - uncomment the variables, if long detailed check is re-implemented
+        //float z1;
+        //float z2;
+        //String levelType1;
+        //String levelType2;
+        //int gridSize1;
+        //int gridSize2;
+        //Calendar time1;
+        //Calendar time2;
+        GribRecord gr1;
+        GribRecord gr2;
+        //GribRecordPDS pds1;
+        //GribRecordPDS pds2;
+        //GribPDSLevel level1;
+        //GribPDSLevel level2;
+        //int check;
 
-      // get the records
-      gr1 = (GribRecord) obj1;
-      gr2 = (GribRecord) obj2;
+        // get the records
+        gr1 = (GribRecord) obj1;
+        gr2 = (GribRecord) obj2;
 
-      // quick check to see if they're the same record
-      if (gr1 == gr2) return 0;
+        // quick check to see if they're the same record
+        if (gr1 == gr2) return 0;
 
-      return -1;
+        return -1;
 /*
       // compare the GDS-s
       check = gr1.getGDS().compare(gr2.getGDS());
@@ -106,5 +106,5 @@ public class GribRecordComparator implements Comparator {
 //      pds2 = gr2.getPDS();
 */
 
-   } // end of method compare
+    } // end of method compare
 }

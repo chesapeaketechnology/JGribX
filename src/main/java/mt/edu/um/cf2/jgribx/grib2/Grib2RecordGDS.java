@@ -4,13 +4,16 @@
  * ============================================================================
  * Written by Andrew Spiteri <andrew.spiteri@um.edu.mt>
  * Adapted from JGRIB: http://jgrib.sourceforge.net/
- * 
+ *
  * Licensed under MIT: https://github.com/spidru/JGribX/blob/master/LICENSE
  * ============================================================================
  */
 package mt.edu.um.cf2.jgribx.grib2;
 
-import mt.edu.um.cf2.jgribx.*;
+import mt.edu.um.cf2.jgribx.GribInputStream;
+import mt.edu.um.cf2.jgribx.Logger;
+import mt.edu.um.cf2.jgribx.NotSupportedException;
+
 import java.io.IOException;
 
 public abstract class Grib2RecordGDS
@@ -20,6 +23,7 @@ public abstract class Grib2RecordGDS
     protected double lon1;
     protected double lon2;
     protected int length;
+
     /**
      * Number of data points
      */
@@ -29,10 +33,10 @@ public abstract class Grib2RecordGDS
     protected int gridNi;
     protected int gridNj;
     protected int[] quasiRegularGridPoints;
-    private int gridType;
+    private final int gridType;
     protected int earthShape;
     protected ScanMode scanMode;
-    
+
     protected class ScanMode
     {
         protected boolean iDirectionPositive;
@@ -43,7 +47,7 @@ public abstract class Grib2RecordGDS
         protected boolean iDirectionOddRowsOffset;
         protected boolean jDirectionOffset;
         protected boolean rowsNiNjPoints;
-        
+
         protected ScanMode(byte flags)
         {
             iDirectionPositive = (flags & 0x80) != 0x80;
@@ -56,21 +60,22 @@ public abstract class Grib2RecordGDS
             rowsNiNjPoints = (flags & 0x01) != 0x01;
         }
     }
-    
+
     /**
-     * This constructor initialises a generic {@link Grib2RecordGDS} 
+     * This constructor initialises a generic {@link Grib2RecordGDS}
      * by only reading the header data from a given {@link GribInputStream}.
+     *
      * @param in
-     * @throws IOException 
+     * @throws IOException
      */
     public Grib2RecordGDS(GribInputStream in) throws IOException
     {
         // [1-4] Length of section in octets
         length = in.readUINT(4);
-        
+
         // [5] Section number
         in.skip(1);
-        
+
         /* [6] Grid Definition Source */
         int gridSource = in.readUINT(1);
         if (gridSource != 0)
@@ -89,27 +94,27 @@ public abstract class Grib2RecordGDS
 
         /* [13-14] Grid Definition Template Number */
         gridType = in.readUINT(2);
-        
+
         /* [15-xx] Grid Definition Template */
         // This part will be processed by constructors of child classes
     }
-    
+
     public static Grib2RecordGDS readFromStream(GribInputStream in) throws IOException, NotSupportedException
     {
         Grib2RecordGDS gds = null;
-        
+
         in.mark(15);
-        
+
         // [1-4] Length of section in octets
         in.skip(4);
-        
+
         // [5] Section number
         int section = in.readUINT(1);
         if (section != 3)
         {
             System.err.println("GDS section number is incorrect");
         }
-        
+
         /* [6] Grid Definition Source */
         in.skip(1);
 
@@ -124,39 +129,45 @@ public abstract class Grib2RecordGDS
 
         /* [13-14] Grid Definition Template Number */
         int gridType = in.readUINT(2);
-        
+
         in.reset();     // required since constructors below will read the GDS from the beginning
-        
-        switch (gridType)
+
+        if (gridType == 0)
+        {// Latitude/Longitude (also called Equidistant Cylindrical or Plate Caree)
+            gds = new Grib2RecordGDSLatLon(in);
+        } else
         {
-            case 0:
-                // Latitude/Longitude (also called Equidistant Cylindrical or Plate Caree)
-                gds = new Grib2RecordGDSLatLon(in);
-                break;
-            default:
-                throw new NotSupportedException("Unsupported grid type: "+gridType);
+            throw new NotSupportedException("Unsupported grid type: " + gridType);
         }
-        
+
         return gds;
     }
-    
+
     protected int getLength()
     {
         return length;
     }
-    
+
     public int getNumberOfDataPoints()
     {
         return nDataPoints;
     }
-    
+
     protected abstract double[][] getGridCoords();
+
     protected abstract double[] getGridXCoords();
+
     protected abstract double[] getGridYCoords();
+
     protected abstract double getGridDeltaX();
+
     protected abstract double getGridDeltaY();
+
     protected abstract double getGridLatStart();
+
     protected abstract double getGridLonStart();
+
     protected abstract int getGridSizeX();
+
     protected abstract int getGridSizeY();
 }

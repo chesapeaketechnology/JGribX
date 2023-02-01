@@ -4,7 +4,7 @@
  * ============================================================================
  * Written by Andrew Spiteri <andrew.spiteri@um.edu.mt>
  * Adapted from JGRIB: http://jgrib.sourceforge.net/
- * 
+ *
  * Licensed under MIT: https://github.com/spidru/JGribX/blob/master/LICENSE
  * ============================================================================
  */
@@ -12,7 +12,6 @@ package mt.edu.um.cf2.jgribx.grib2;
 
 public class Grib2Level
 {
-    
     protected String code;          // provides a unique codename for the level
     protected String description;   // describes the level together with any specified values
     protected String name;          // provides a generic name for the level
@@ -22,13 +21,13 @@ public class Grib2Level
 
     /**
      * Constructor for an instance of {@link Grib2Level} matching the specified type and value
-     * Reference: https://fossies.org/linux/gdal/frmts/grib/degrib/data/grib2_table_4_5.csv
+     * Reference: <a href="https://fossies.org/linux/gdal/frmts/grib/degrib/data/grib2_table_4_5.csv">...</a>
      */
     public Grib2Level()
     {
         this.units = "";
     }
-    
+
     public static Grib2Level getLevel(int type, float value)
     {
         Grib2Level level = new Grib2Level();
@@ -54,7 +53,7 @@ public class Grib2Level
             case 5:
                 level.code = "ADCL";
                 level.description = level.name = "level of adiabatic condensation lifted from the surface";
-              break;
+                break;
             case 6:
                 level.code = "MWSL";
                 level.description = level.name = "maximum wind level";
@@ -139,37 +138,37 @@ public class Grib2Level
         }
         return level;
     }
-    
+
     public String getCode()
     {
         return code;
     }
-    
+
     public String getDescription()
     {
         return description;
     }
-    
+
     public int getIndex()
     {
         return index;
     }
-    
+
     public String getLevelIdentifier()
     {
-        return code+":"+ value;
+        return code + ":" + value;
     }
-    
+
     public String getName()
     {
         return name;
     }
-    
+
     public String getUnits()
     {
         return units;
     }
-    
+
     public float getValue()
     {
         return value;

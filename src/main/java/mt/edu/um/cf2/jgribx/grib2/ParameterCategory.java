@@ -9,8 +9,8 @@ import java.util.Map;
 
 public abstract class ParameterCategory
 {
-    private String name;
-    private int value;
+    private final String name;
+    private final int value;
 
     public ParameterCategory(int categoryId)
     {
@@ -64,7 +64,8 @@ public abstract class ParameterCategory
     {
         private static final Map<Integer, String> entries = new HashMap();
 
-        static {
+        static
+        {
             entries.put(0, "TEMPERATURE");
             entries.put(1, "MOISTURE");
             entries.put(2, "MOMENTUM");
@@ -100,7 +101,8 @@ public abstract class ParameterCategory
     {
         private static final Map<Integer, String> entries = new HashMap<>();
 
-        static {
+        static
+        {
             entries.put(0, "BASIC");
 //            entries.put(1, "PROBABILITIES");
         }
@@ -130,7 +132,8 @@ public abstract class ParameterCategory
     {
         private static final Map<Integer, String> entries = new HashMap<>();
 
-        static {
+        static
+        {
             entries.put(0, "VEGETATION_BIOMASS");
 //            entries.put(1, "AGRICULTURAL_AQUACULTURAL");
             entries.put(3, "SOIL");
@@ -162,7 +165,8 @@ public abstract class ParameterCategory
     {
         private static final Map<Integer, String> entries = new HashMap<>();
 
-        static {
+        static
+        {
 //            entries.put(0, "IMAGE_FORMAT");
 //            entries.put(1, "QUANTITATIVE");
         }
@@ -192,7 +196,8 @@ public abstract class ParameterCategory
     {
         private static final Map<Integer, String> entries = new HashMap<>();
 
-        static {
+        static
+        {
             entries.put(2, "ICE");
         }
 

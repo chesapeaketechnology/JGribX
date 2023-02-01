@@ -4,174 +4,181 @@
  * ============================================================================
  * Written by Andrew Spiteri <andrew.spiteri@um.edu.mt>
  * Adapted from JGRIB: http://jgrib.sourceforge.net/
- * 
+ *
  * Licensed under MIT: https://github.com/spidru/JGribX/blob/master/LICENSE
  * ============================================================================
  */
 package mt.edu.um.cf2.jgribx.grib1;
-
-import mt.edu.um.cf2.jgribx.Logger;
 
 /**
  * Title:        JGrib
  * Description:  Class which represents a parameter from a PDS parameter table
  * Copyright:    Copyright (c) 2002
  * Company:      U.S. Air Force
+ *
  * @author Capt Richard D. Gonzalez
  * @version 1.0
  */
 
-public class Grib1Parameter {
-
-	/**
-	 * Parameter number [0 - 255]
-	 */
-   protected int number;
-   
-   /**
-    * Parameter abbreviation
-    */
-   protected String code;
-   
-   /**
-    * Parameter description
-    */
-   protected String description;
-
-   /**
-    * Parameter unit
-    */
-   protected String units;
-
-   /**
-    * Constuctor - Default
-    */
-   public Grib1Parameter() {
-      this.number = 0;
-      this.code = "";
-      this.description = "";
-      this.units = "";
-   }
-
-   /**
-    * Constructor
-    * @param aNum - Parameter number
- 	* @param aName - Parameter name
- 	* @param aDesc - Parameter description
- 	* @param aUnit - Parameter unit
- 	*/
-   public Grib1Parameter(int aNum, String aName, String aDesc, String aUnit){
-      this.number=aNum;
-      this.code=aName;
-      this.description=aDesc;
-      this.units=aUnit;
-   }
-
-   /**
-    * @return Parameter number
-    */
-   public int getNumber(){
-      return number;
-   }
-
-   /**
-    * @return Parameter abbreviation
-    */
-   public String getAbbreviation(){
-      return code;
-   }
-
-   /**
-    * @return Parameter description
-    */
-   public String getDescription(){
-      return description;
-   }
-
-   /**
-    * @return Parameter unit
-    */
-   public String getUnits(){
-      return units;
-   }
-
-   
-   /**
-    * Overrides Object.toString()
-    * 
-    * @see java.lang.Object#toString()
-    * @return String representation of the parameter
-    */
-   @Override
-   public String toString(){
-      return number + ":" + code + ":" + description + " [" + units +"]";
-   }
-
-   
-   /**
-    * Overrides Object.equals()
-    * 
-    * @see java.lang.Object#equals(java.lang.Object)
-    * @return true/false
-    */
-   public boolean equals(Object obj){
-      if (!(obj instanceof Grib1Parameter))
-         return false;
-
-      if (this == obj)
-         return true;
-
-      Grib1Parameter param = (Grib1Parameter)obj;
-
-      if (code != param.code) return false;
-      if (number != param.number) return false;
-      if (description != param.description) return false;
-      if (units != param.units) return false;
-
-      return true;
-   }
-
-   /**
-    * rdg - added this method to be used in a comparator for sorting while
-    *       extracting records.
-    * @param param to compare
-    * @return - -1 if level is "less than" this, 0 if equal, 1 if level is "greater than" this.
-    *
-    */
-   public int compare(Grib1Parameter param){
-      if (this.equals(param))
-         return 0;
-
-      // check if param is less than this
-      // really only one thing to compare because parameter table sets info
-      // compare tables in GribRecordPDS
-      if (number > param.number) return -1;
-
-      return 1;
-   }
-   
-    /**************************************************************************/
-    /* Static Methods */
+public class Grib1Parameter
+{
+    /**
+     * Parameter number [0 - 255]
+     */
+    protected int number;
 
     /**
-     * 
+     * Parameter abbreviation
+     */
+    protected String code;
+
+    /**
+     * Parameter description
+     */
+    protected String description;
+
+    /**
+     * Parameter unit
+     */
+    protected String units;
+
+    /**
+     * Constuctor - Default
+     */
+    public Grib1Parameter()
+    {
+        this.number = 0;
+        this.code = "";
+        this.description = "";
+        this.units = "";
+    }
+
+    /**
+     * Constructor
+     *
+     * @param aNum  - Parameter number
+     * @param aName - Parameter name
+     * @param aDesc - Parameter description
+     * @param aUnit - Parameter unit
+     */
+    public Grib1Parameter(int aNum, String aName, String aDesc, String aUnit)
+    {
+        this.number = aNum;
+        this.code = aName;
+        this.description = aDesc;
+        this.units = aUnit;
+    }
+
+    /**
+     * @return Parameter number
+     */
+    public int getNumber()
+    {
+        return number;
+    }
+
+    /**
+     * @return Parameter abbreviation
+     */
+    public String getAbbreviation()
+    {
+        return code;
+    }
+
+    /**
+     * @return Parameter description
+     */
+    public String getDescription()
+    {
+        return description;
+    }
+
+    /**
+     * @return Parameter unit
+     */
+    public String getUnits()
+    {
+        return units;
+    }
+
+    /**
+     * Overrides Object.toString()
+     *
+     * @return String representation of the parameter
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString()
+    {
+        return number + ":" + code + ":" + description + " [" + units + "]";
+    }
+
+    /**
+     * Overrides Object.equals()
+     *
+     * @return true/false
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object obj)
+    {
+        if (!(obj instanceof Grib1Parameter))
+        {
+            return false;
+        }
+
+        if (this == obj)
+        {
+            return true;
+        }
+
+        Grib1Parameter param = (Grib1Parameter) obj;
+
+        if (code != param.code) return false;
+        if (number != param.number) return false;
+        if (description != param.description) return false;
+        return units == param.units;
+    }
+
+    /**
+     * rdg - added this method to be used in a comparator for sorting while
+     * extracting records.
+     *
+     * @param param to compare
+     * @return - -1 if level is "less than" this, 0 if equal, 1 if level is "greater than" this.
+     */
+    public int compare(Grib1Parameter param)
+    {
+        if (this.equals(param))
+        {
+            return 0;
+        }
+
+        // check if param is less than this
+        // really only one thing to compare because parameter table sets info
+        // compare tables in GribRecordPDS
+        if (number > param.number) return -1;
+
+        return 1;
+    }
+
+    /**
      * @param version
      * @param paramId
      * @param centreId
-     * @return 
+     * @return
      */
     public static Grib1Parameter getParameter(int version, int paramId, int centreId)
     {
         Grib1Parameter param;
-        
+
         // As of Nov 2017, all Table Versions make use of Table 2 for Parameter IDs between 0 and 128
         if (paramId < 128)
         {
             param = getParameterFromTable2(paramId, centreId);
             return param;
         }
-        
-        switch(version)
+
+        switch (version)
         {
             case 2:
                 param = getParameterFromTable2(paramId, centreId);
@@ -194,13 +201,14 @@ public class Grib1Parameter {
      * <br><br>
      * Reference: <a href="http://www.nco.ncep.noaa.gov/pmb/docs/on388/table2.html">
      * http://www.nco.ncep.noaa.gov/pmb/docs/on388/table2.html</a>
+     *
      * @param paramId
-     * @return 
+     * @return
      */
     private static Grib1Parameter getParameterFromTable2(int paramId, int centreId)
     {
         Grib1Parameter param = new Grib1Parameter();
-        switch(paramId)
+        switch (paramId)
         {
             case 1:
                 param.code = "PRES";
@@ -838,24 +846,22 @@ public class Grib1Parameter {
                 param.units = "";
                 break;
             default:
-                switch(centreId)
+                if (centreId == 7)
                 {
-                    case 7:
-                        param = getParameterFromTable2Centre7(paramId);
-                        break;
-                    default:
-                        param = null;
-                        break;
+                    param = getParameterFromTable2Centre7(paramId);
+                } else
+                {
+                    param = null;
                 }
                 break;
         }
         return param;
     }
-    
+
     private static Grib1Parameter getParameterFromTable2Centre7(int paramId)
     {
         Grib1Parameter param = new Grib1Parameter();
-        switch(paramId)
+        switch (paramId)
         {
             case 128:
                 param.code = "MSLSA";
@@ -1159,7 +1165,7 @@ public class Grib1Parameter {
                 param.code = "VPTMP";
                 param.description = "Virtual potential temperature";
                 param.units = "K";
-                break;                
+                break;
             case 190:
                 param.code = "HLCY";
                 param.description = "Storm relative helicity";
@@ -1175,22 +1181,22 @@ public class Grib1Parameter {
                 param.description = "Probability from ensemble normalized with"
                         + "respect to climate expectancy";
                 param.units = "%";
-                break; 	 	
+                break;
             case 193:
                 param.code = "POP";
                 param.description = "Probability of precipitation";
                 param.units = "%";
-                break; 	 	
+                break;
             case 194:
                 param.code = "CPOFP";
                 param.description = "Percent of frozen precipitation";
                 param.units = "%";
-                break; 	 	
+                break;
             case 195:
                 param.code = "CPOZP";
                 param.description = "Probability of freezing precipitation";
                 param.units = "%";
-                break; 	 	
+                break;
             case 196:
                 param.code = "USTM";
                 param.description = "u-component of storm motion";
@@ -1219,7 +1225,7 @@ public class Grib1Parameter {
                 param.code = "ICWAT";
                 param.description = "Ice-free water surface";
                 param.units = "%";
-                break; 	 	
+                break;
             case 202:
                 param.code = "CWDI";
                 param.description = "Convective weather detection index";
@@ -1228,7 +1234,7 @@ public class Grib1Parameter {
                 param.code = "VAFTD";
                 param.description = "VAFTAD";
                 param.units = "log10(kg/m^3)";
-                break; 	
+                break;
             case 204:
                 param.code = "DSWRF";
                 param.description = "downward short wave rad. flux";
@@ -1253,7 +1259,7 @@ public class Grib1Parameter {
                 param.code = "SFEXC";
                 param.description = "Exchange coefficient";
                 param.units = "(kg/m^3)(m/s)";
-                break;    
+                break;
             case 209:
                 param.code = "MIXLY";
                 param.description = "No. of mixed layers next to surface";
@@ -1278,7 +1284,7 @@ public class Grib1Parameter {
                 param.code = "CDLYR";
                 param.description = "Amount of non-convective cloud";
                 param.units = "%";
-                break;	
+                break;
             case 214:
                 param.code = "CPRAT";
                 param.description = "Convective Precipitation rate";
@@ -1333,12 +1339,12 @@ public class Grib1Parameter {
                 param.code = "SOTYP";
                 param.description = "Soil type (as in Zobler)";
                 param.units = "";
-                break;	
+                break;
             case 225:
                 param.code = "VGTYP";
                 param.description = "Vegitation type (as in SiB)";
                 param.units = "";
-                break; 	
+                break;
             case 226:
                 param.code = "BMIXL";
                 param.description = "Blackadar's mixing length scale";
@@ -1413,7 +1419,7 @@ public class Grib1Parameter {
                 param.description = "Covariance between temperature and "
                         + "vertical component of the wind";
                 param.units = "K*m/s";
-                break;	 	
+                break;
             case 241:
                 param.code = "LRGHR";
                 param.description = "Large scale condensate heat rate";
@@ -1488,19 +1494,20 @@ public class Grib1Parameter {
         }
         return param;
     }
-    
+
     /**
      * Returns the parameter in Parameter Table 128 corresponding to the specified ID.
      * <br><br>
      * Reference: <a href="http://www.nco.ncep.noaa.gov/pmb/docs/on388/table2.html#TABLE128">
      * http://www.nco.ncep.noaa.gov/pmb/docs/on388/table2.html</a>
+     *
      * @param id
      * @return the parameter in Parameter Table 128 corresponding to the specified ID
      */
     private static Grib1Parameter getParameterFromTable128(int id)
     {
         Grib1Parameter param = new Grib1Parameter();
-        switch(id)
+        switch (id)
         {
             case 128:
                 param.code = "AVDEPTH";
@@ -1584,7 +1591,7 @@ public class Grib1Parameter {
                 break;
             case 147:
                 param.code = "S12";
-                param.description= "S12 - 1,2 component of ice stress tensor";
+                param.description = "S12 - 1,2 component of ice stress tensor";
                 param.units = "";
                 break;
             case 148:
@@ -1646,7 +1653,7 @@ public class Grib1Parameter {
                 param.code = "AIHFLX";
                 param.description = "Net air-ice heat flux";
                 param.units = "W/m2";
-                break;	
+                break;
             case 171:
                 param.code = "AOHFLX";
                 param.description = "Net air-ocean heat flux";
@@ -1783,19 +1790,20 @@ public class Grib1Parameter {
         }
         return param;
     }
-    
+
     /**
      * Returns the parameter in Parameter Table 129 corresponding to the specified ID.
      * <br><br>
      * Reference: <a href="http://www.nco.ncep.noaa.gov/pmb/docs/on388/table2.html#TABLE129">
      * http://www.nco.ncep.noaa.gov/pmb/docs/on388/table2.html</a>
+     *
      * @param id
      * @return the parameter in Parameter Table 129 corresponding to the specified ID
-     */    
+     */
     private static Grib1Parameter getParameterFromTable129(int id)
     {
         Grib1Parameter param = new Grib1Parameter();
-        switch(id)
+        switch (id)
         {
             case 128:
                 param.code = "PAOT";
@@ -1811,7 +1819,7 @@ public class Grib1Parameter {
                 param.code = "CWR";
                 param.description = "Probability of Wetting Rain, exceeding 0.10 in a given time period";
                 param.units = "%";
-                break;	
+                break;
             case 131:
                 param.code = "FRAIN";
                 param.description = "Rain fraction of total liquid water";
@@ -1891,7 +1899,7 @@ public class Grib1Parameter {
                 param.code = "TCWAT";
                 param.description = "Total Water Cloud";
                 param.units = "%";
-                break;	
+                break;
             case 147:
                 param.code = "TCICE";
                 param.description = "Total Ice Cloud";
@@ -1971,7 +1979,7 @@ public class Grib1Parameter {
                 param.code = "AEVWD";
                 param.description = "Analysis error of v-wind";
                 param.units = "m/s";
-                break;	
+                break;
             case 163:
                 param.code = "LPMTF";
                 param.description = "Particulate matter (fine)";
@@ -2016,7 +2024,7 @@ public class Grib1Parameter {
                 param.code = "TSEC";
                 param.description = "Seconds prior to initial reference time";
                 param.units = "sec";
-                break; 
+                break;
             case 172:
                 param.code = "TSECA";
                 param.description = "Seconds after initial reference time";
@@ -2026,7 +2034,7 @@ public class Grib1Parameter {
                 param.code = "NUM";
                 param.description = "Number of samples/observations";
                 param.units = "";
-                break;	
+                break;
             case 174:
                 param.code = "AEPRS";
                 param.description = "Analysis error of pressure";
@@ -2206,7 +2214,7 @@ public class Grib1Parameter {
                 param.code = "REFO";
                 param.description = "Observed radar reflectivity";
                 param.units = "dbZ";
-                break;    
+                break;
             case 211:
                 param.code = "REFD";
                 param.description = "Derived radar reflectivity";
@@ -2326,7 +2334,7 @@ public class Grib1Parameter {
                 param.code = "PDMX24";
                 param.description = "PM 2.5 Daily Max from 24-hour Average";
                 param.units = "μg/m3";
-                break;    
+                break;
             case 235:
                 param.code = "MAXREF";
                 param.description = "Hourly Maximum of Simulated Reflectivity at 1 km AGL";
@@ -2416,7 +2424,7 @@ public class Grib1Parameter {
                 param.code = "PSPCP";
                 param.description = "Pseudo-Precipitation";
                 param.units = "kg/m2";
-                break;    
+                break;
             case 253:
                 param.code = "MAXUW";
                 param.description = "U Component of Hourly Maximum 10m Wind Speed";

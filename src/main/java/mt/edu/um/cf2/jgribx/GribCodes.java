@@ -4,31 +4,28 @@
  * ============================================================================
  * Written by Andrew Spiteri <andrew.spiteri@um.edu.mt>
  * Adapted from JGRIB: http://jgrib.sourceforge.net/
- * 
+ *
  * Licensed under MIT: https://github.com/spidru/JGribX/blob/master/LICENSE
  * ============================================================================
  */
 package mt.edu.um.cf2.jgribx;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
- *
  * 02/06/2017   Andrew Spiteri      initial version
  */
 public class GribCodes
 {
-   /**
-    * Returns the name of the originating centre corresponding to the specified ID.
-    * Source: <a href="http://www-lehre.informatik.uni-osnabrueck.de/~fbstark/diplom/docs/data/GRIB/index.html">http://www-lehre.informatik.uni-osnabrueck.de/~fbstark/diplom/docs/data/GRIB/index.html</a>
-    * @param id
-    * @return the name of the originating centre corresponding to the specified ID
-    */
+    /**
+     * Returns the name of the originating centre corresponding to the specified ID.
+     * Source: <a href="http://www-lehre.informatik.uni-osnabrueck.de/~fbstark/diplom/docs/data/GRIB/index.html">http://www-lehre.informatik.uni-osnabrueck.de/~fbstark/diplom/docs/data/GRIB/index.html</a>
+     *
+     * @param id
+     * @return the name of the originating centre corresponding to the specified ID
+     */
     public static String getCentreName(int id)
     {
         String name;
-        switch(id)
+        switch (id)
         {
             case 1:
             case 2:
@@ -261,18 +258,18 @@ public class GribCodes
                 break;
             case 255:
                 name = "Missing value";
-                break;    
+                break;
             default:
                 name = "Reserved";
                 break;
         }
         return name;
     }
-    
+
     public static String getProcessName(int id)
     {
         String name;
-        switch(id)
+        switch (id)
         {
             case 2:
                 name = "Ultra Violet Index Model";
@@ -646,8 +643,8 @@ public class GribCodes
         }
         return name;
     }
-    
-    public static enum DataRepresentation
+
+    public enum DataRepresentation
     {
         GridPointData_SimplePacking, MatrixValueAtGridPoint_SimplePacking,
         GridPointData_ComplexPacking, GridPointData_ComplexPackingAndSpatialDifferencing

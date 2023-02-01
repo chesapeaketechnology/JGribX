@@ -4,7 +4,7 @@
  * ============================================================================
  * Written by Andrew Spiteri <andrew.spiteri@um.edu.mt>
  * Adapted from JGRIB: http://jgrib.sourceforge.net/
- * 
+ *
  * Licensed under MIT: https://github.com/spidru/JGribX/blob/master/LICENSE
  * ============================================================================
  */
@@ -13,7 +13,6 @@ package mt.edu.um.cf2.jgribx;
 import java.io.IOException;
 
 /**
- *
  * @author AVLAB-USER3
  */
 public class GribRecordES
@@ -29,13 +28,12 @@ public class GribRecordES
         {
             Logger.println("Record has not ended correctly.", Logger.ERROR);
             isValid = false;
-        }
-        else
+        } else
         {
             isValid = true;
         }
     }
-    
+
     public static void seekNext(GribInputStream in) throws IOException
     {
         int nBytes = in.seekBytePattern(PATTERN.getBytes(), true);

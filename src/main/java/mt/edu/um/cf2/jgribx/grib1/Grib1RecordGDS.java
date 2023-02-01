@@ -4,25 +4,26 @@
  * ============================================================================
  * Written by Andrew Spiteri <andrew.spiteri@um.edu.mt>
  * Adapted from JGRIB: http://jgrib.sourceforge.net/
- * 
+ *
  * Licensed under MIT: https://github.com/spidru/JGribX/blob/master/LICENSE
  * ============================================================================
  */
 package mt.edu.um.cf2.jgribx.grib1;
 
-import java.io.IOException;
-import java.util.Arrays;
 import mt.edu.um.cf2.jgribx.Bytes2Number;
 import mt.edu.um.cf2.jgribx.GribInputStream;
 import mt.edu.um.cf2.jgribx.NoValidGribException;
 import mt.edu.um.cf2.jgribx.NotSupportedException;
 
+import java.io.IOException;
+import java.util.Arrays;
+
 /**
  * A class that represents the grid definition section (GDS) of a GRIB record.
  * <p>
  * 5 Okt 05 - Changed class to become abstract as intended by RDG all common
- * methods between this class and all known subclasses is changed to 
- * abstract methods, so it becomes more clear, which methods one should 
+ * methods between this class and all known subclasses is changed to
+ * abstract methods, so it becomes more clear, which methods one should
  * actually implement, when adding support for a new type of GRIB files.
  * <p>
  * 4 Sep 02 - Modified to be implemented using GribGDSFactory class.
@@ -31,14 +32,14 @@ import mt.edu.um.cf2.jgribx.NotSupportedException;
  * common, or similar, in all GDS types.
  * Sometimes names vary slightly in Table D, but functionality is similar, e.g.
  * <p><code>
- *    Grid type     Octet    Id
- *     Lat/Lon       7-8      Ni - Number of points along a latitude circle
- *     Lambert       7-8      Nx - Number of points along x-axis
+ * Grid type     Octet    Id
+ * Lat/Lon       7-8      Ni - Number of points along a latitude circle
+ * Lambert       7-8      Nx - Number of points along x-axis
  * </code><p>
  * Other times, functionality is different, e.g.
  * <p><code>
- *     Lat/Lon      18-20     La2 - latitude of grid point
- *     Lambert      18-20     Lov - the orientation of the grid
+ * Lat/Lon      18-20     La2 - latitude of grid point
+ * Lambert      18-20     Lov - the orientation of the grid
  * </code><p>
  * However, all sets have at least 32 octets.  Those 32 are stored here, and the
  * differences are resolved in the child classes, and therefore, all
@@ -55,119 +56,116 @@ import mt.edu.um.cf2.jgribx.NotSupportedException;
  * to be used in legacy programs (still limited to grid_type 0 and 10).
  * <p>
  * New users should not create instances of this class directly (in fact, it
- *   should be changed to an abstract class - it's on the to do list), but use the
- *   GribGDS factory instead, and add new child classes (e.g. GribGDSXxxx) as
- *   needed for additional grid_types.
- *   
- * @author  Benjamin Stark <p>
- * @author  Capt Richard D. Gonzalez, USAF (Modified original code) <p>
- * @author  Peter Gylling <peg at frv.dk> (Made class abstract)<p>
+ * should be changed to an abstract class - it's on the to do list), but use the
+ * GribGDS factory instead, and add new child classes (e.g. GribGDSXxxx) as
+ * needed for additional grid_types.
+ *
+ * @author Benjamin Stark <p>
+ * @author Capt Richard D. Gonzalez, USAF (Modified original code) <p>
+ * @author Peter Gylling <peg at frv.dk> (Made class abstract)<p>
  * @version 3.0
  */
 
 public abstract class Grib1RecordGDS
 {
-    
     protected double latitudeFirst;
     protected double latitudeLast;
     protected double longitudeFirst;
     protected double longitudeLast;
     protected int nDataPoints;
-    
-   /**
-    * Radius of earth used in calculating projections
-    * per table 7 - assumes spheroid
-    */
-   protected final double EARTH_RADIUS=6367470; 
-	
-   /**
-    * Length in bytes of this section.
-    */
-   protected int length;
 
-   /**
-    * Type of grid (See table 6)
-    */
-   protected int grid_type;
+    /**
+     * Radius of earth used in calculating projections
+     * per table 7 - assumes spheroid
+     */
+    protected final double EARTH_RADIUS = 6367470;
 
-   /**
-    * Number of grid columns. (Also Ni)
-    */
-   protected int grid_nx;
+    /**
+     * Length in bytes of this section.
+     */
+    protected int length;
 
-   /**
-    * Number of grid rows. (Also Nj)
-    */
-   protected int grid_ny;
+    /**
+     * Type of grid (See table 6)
+     */
+    protected int grid_type;
 
-   /**
-    * Latitude of grid start point.
-    */
-   protected double grid_lat1;
+    /**
+     * Number of grid columns. (Also Ni)
+     */
+    protected int grid_nx;
 
-   /**
-    * Longitude of grid start point.
-    */
-   protected double grid_lon1;
+    /**
+     * Number of grid rows. (Also Nj)
+     */
+    protected int grid_ny;
 
-   /**
-    * Mode of grid (See table 7)
-    * only 128 supported == increments given)
-    */
-   protected int grid_mode;
+    /**
+     * Latitude of grid start point.
+     */
+    protected double grid_lat1;
 
-   /**
-    * Latitude of grid end point.
-    */
-   protected double grid_lat2;
+    /**
+     * Longitude of grid start point.
+     */
+    protected double grid_lon1;
 
-   /**
-    * Longitude of grid end point.
-    */
-   protected double grid_lon2;
+    /**
+     * Mode of grid (See table 7)
+     * only 128 supported == increments given)
+     */
+    protected int grid_mode;
 
-   /**
-    * x-distance between two grid points
-    * can be delta-Lon or delta x.
-    */
-   protected double grid_dx;
+    /**
+     * Latitude of grid end point.
+     */
+    protected double grid_lat2;
 
-   /**
-    * y-distance of two grid points
-    * can be delta-Lat or delta y.
-    */
-   protected double grid_dy;
+    /**
+     * Longitude of grid end point.
+     */
+    protected double grid_lon2;
 
-   /**
-    * Scanning mode (See table 8).
-    */
-   protected int grid_scan;
+    /**
+     * x-distance between two grid points
+     * can be delta-Lon or delta x.
+     */
+    protected double grid_dx;
 
-   // rdg - the remaining coordinates are not common to all types, and as such
-   //    should be removed.  They are left here (temporarily) for continuity.
-   //    These should be implemented in a GribGDSxxxx child class.
+    /**
+     * y-distance of two grid points
+     * can be delta-Lat or delta y.
+     */
+    protected double grid_dy;
 
-   /**
-    * y-coordinate/latitude of south pole of a rotated lat/lon grid.
-    */
-   protected double grid_latsp;
+    /**
+     * Scanning mode (See table 8).
+     */
+    protected int grid_scan;
 
-   /**
-    * x-coordinate/longitude of south pole of a rotated lat/lon grid.
-    */
-   protected double grid_lonsp;
+    // rdg - the remaining coordinates are not common to all types, and as such should be removed.
+    // They are left here (temporarily) for continuity. These should be implemented in a GribGDSxxxx child class.
 
-   /**
-    * Rotation angle of rotated lat/lon grid.
-    */
-   protected double grid_rotang;
+    /**
+     * y-coordinate/latitude of south pole of a rotated lat/lon grid.
+     */
+    protected double grid_latsp;
 
-   // *** constructors *******************************************************
+    /**
+     * x-coordinate/longitude of south pole of a rotated lat/lon grid.
+     */
+    protected double grid_lonsp;
+
+    /**
+     * Rotation angle of rotated lat/lon grid.
+     */
+    protected double grid_rotang;
+
     public Grib1RecordGDS(GribInputStream in) throws IOException
     {
         /* [1-3] Length of section in octets */
         length = in.readUINT(4);
-        
+
         /* [4] NV -- number of vertical coordinate parameters */
         in.skip(1);
         
@@ -176,285 +174,275 @@ public abstract class Grib1RecordGDS
                255 (all bits set to 1) if neither are present
         */
         in.skip(1);
-        
+
         /* [6] Data representation type */
         grid_type = in.readUINT(1);
-        
+
         /* [7-xx] */
     }
-    
+
     public static Grib1RecordGDS readFromStream(GribInputStream in) throws IOException, NoValidGribException, NotSupportedException
     {
         Grib1RecordGDS gds = null;
-        
+
         in.mark(6);
         in.skip(5);
         int type = in.readUINT(1);
         in.reset();
-        
-        switch(type)
+
+        switch (type)
         {
             case 0:
                 gds = new Grib1GDSLatLon(in);
                 break;
             case 1:
                 throw new NotSupportedException("Mercator projection is not yet supported");
-//            case 3:
-//                gds = new GribGDSLambert(in, header);
-//                break;
             default:
-                throw new NotSupportedException("Unknown GDS type: "+type);               
+                throw new NotSupportedException("Unknown GDS type: " + type);
         }
         return gds;
     }
-   /**
-    * New constructor created for child classes, which has to be public!
-    *
-    * @param header - integer array of header data (octets 1-6) read in
-    * GribGDSFactory
-    *
-    * exceptions are thrown in children and passed up
-    * @see net.sourceforge.jgrib.GribGDSFactory#getGDS(BitInputStream)
-    */
-   public Grib1RecordGDS(byte[] header){
 
-      // octets 1-3 (GDS section length)
+    /**
+     * New constructor created for child classes, which has to be public!
+     *
+     * @param header - integer array of header data (octets 1-6) read in
+     *               GribGDSFactory
+     *               <p>
+     *               exceptions are thrown in children and passed up
+     */
+    public Grib1RecordGDS(byte[] header)
+    {
+
+        // octets 1-3 (GDS section length)
 //      this.length = Bytes2Number.uint3(header[0], header[1], header[2]);
-      this.length = Bytes2Number.bytesToUint(Arrays.copyOfRange(header, 0, 3));
+        this.length = Bytes2Number.bytesToUint(Arrays.copyOfRange(header, 0, 3));
 
-      // octet 4 (number of vertical coordinate parameters) and
-      // octet 5 (octet location of vertical coordinate parameters
-      // not implemented yet
+        // octet 4 (number of vertical coordinate parameters) and
+        // octet 5 (octet location of vertical coordinate parameters
+        // TODO: not implemented yet
 
-      // octet 6 (grid type)
-      this.grid_type = Bytes2Number.bytesToUint(header[5]);
-   }
+        // octet 6 (grid type)
+        this.grid_type = Bytes2Number.bytesToUint(header[5]);
+    }
 
-// *** public methods **************************************************************
+    // rdg - the basic getters can remain here, but other functionality should  be moved to the child GribGDSxxxx classes.
+    // For now, overriding these methods will work just fine.
 
-   // rdg - the basic getters can remain here, but other functionality should
-   //    be moved to the child GribGDSxxxx classes.  For now, overriding these
-   //    methods will work just fine.
+    // peg - turned all common methods into abstract methods, so it will become easier to subclass with a new GDS type
+    // class, this way it's much more clear which methods is standard for all GDS types
 
-   // peg - turned all common methods into abstract methods, so it will become
-   //       easier to subclass with a new GDS type class, this way it's much
-   //       more clear which methods is standard for all GDS types
+    /**
+     * Get length in bytes of this section.
+     *
+     * @return length in bytes of this section
+     */
+    public abstract int getLength();
 
-   /**
-    * Get length in bytes of this section.
-    *
-    * @return length in bytes of this section
-    */
-   	public abstract int getLength();
+    /**
+     * Get type of grid.
+     *
+     * @return type of grid
+     */
+    public abstract int getGridType();
 
+    /**
+     * Get number of grid columns.
+     *
+     * @return number of grid columns
+     */
+    public abstract int getGridNX();
 
-   /**
-    * Get type of grid. 
-    *
-    * @return type of grid
-    */
-   	public abstract int getGridType();
+    /**
+     * Get number of grid rows.
+     *
+     * @return number of grid rows.
+     */
+    public abstract int getGridNY();
 
-   /**
-    * Get number of grid columns.
-    *
-    * @return number of grid columns
-    */
-   public abstract int getGridNX();
+    /**
+     * Get y-coordinate/latitude of grid start point.
+     *
+     * @return y-coordinate/latitude of grid start point
+     */
+    public abstract double getGridLat1();
 
+    /**
+     * Get x-coordinate/longitude of grid start point.
+     *
+     * @return x-coordinate/longitude of grid start point
+     */
+    public abstract double getGridLon1();
 
-   /**
-    * Get number of grid rows.
-    *
-    * @return number of grid rows.
-    */
-   public abstract int getGridNY();
+    /**
+     * Get grid mode.
+     * <i>Only 128 (increments given) supported so far.</i>
+     *
+     * @return grid mode
+     */
+    public abstract int getGridMode();
 
-   /**
-    * Get y-coordinate/latitude of grid start point.
-    *
-    * @return y-coordinate/latitude of grid start point
-    */
-   public abstract double getGridLat1();
+    /**
+     * Get x-increment/distance between two grid points.
+     *
+     * @return x-increment
+     */
+    public abstract double getGridDX();
 
-   /**
-    * Get x-coordinate/longitude of grid start point.
-    *
-    * @return x-coordinate/longitude of grid start point
-    */
-   public abstract double getGridLon1();
+    /**
+     * Get y-increment/distance between two grid points.
+     *
+     * @return y-increment
+     */
+    public abstract double getGridDY();
 
-   /**
-    * Get grid mode. 
-    * <i>Only 128 (increments given) supported so far.</i>
-    *
-    * @return grid mode
-    */
-   public abstract int getGridMode();
+    /**
+     * Get scan mode (sign of increments).
+     * <i>Only 64, 128 and 192 supported so far.</i>
+     *
+     * @return scan mode
+     */
+    public abstract int getGridScanmode();
 
-   /**
-    * Get x-increment/distance between two grid points.
-    *
-    * @return x-increment
-    */
-   public abstract double getGridDX();
+    /**
+     * Get all longitide coordinates
+     *
+     * @return longtitude as double
+     */
+    public abstract double[] getXCoords();
 
+    /**
+     * Get all latitude coordinates
+     *
+     * @return latitude as double
+     */
+    public abstract double[] getYCoords();
 
-   /**
-    * Get y-increment/distance between two grid points.
-    *
-    * @return y-increment
-    */
-   public abstract double getGridDY();
+    /**
+     * Get grid coordinates in longitude/latitude
+     *
+     * @return longitide/latituide as doubles
+     */
+    public abstract double[] getGridCoords();
 
+    /**
+     * Table J.Resolution and Component Flags,
+     * bit 5 (from left) = 2^(8-5) = 8 = 0x08 :
+     * false = u and v components are relative to east, north
+     * true = u and v components are relative to  grid x,y direction (i,j)
+     *
+     * @return true/false
+     */
+    public abstract boolean isUVEastNorth();
 
-   /**
-    * Get scan mode (sign of increments). 
-    * <i>Only 64, 128 and 192 supported so far.</i>
-    *
-    * @return scan mode
-    */
-   public abstract int getGridScanmode();
+    /**
+     * Overrides Object.hashCode() to be used in hashTables
+     *
+     * @see java.lang.Object#hashCode()
+     */
+    public abstract int hashCode();
 
-   /**
-    * Get all longitide coordinates
-    * @return longtitude as double
-    */
-   public abstract double[] getXCoords();
+    /**
+     * Overrides Object.equals() - perfect for testing
+     *
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public abstract boolean equals(Object obj);
 
-   /**
-    * Get all latitude coordinates
-    * @return latitude as double
-    */
-   public abstract double[] getYCoords();
+    /**
+     * rdg - added this method to be used in a comparator for sorting while
+     * extracting records.
+     * Not currently used in the JGrib library, but is used in a library I'm
+     * using that uses JGrib.
+     *
+     * @param gds - GribRecordGDS
+     * @return - -1 if gds is "less than" this, 0 if equal, 1 if gds is "greater than" this.
+     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+     */
+    public abstract int compare(Grib1RecordGDS gds);
 
-   /**
-    * Get grid coordinates in longitude/latitude
-    * @return longitide/latituide as doubles
-    */
-   public abstract double[] getGridCoords();
-  
-   /**
-    * Table J.Resolution and Component Flags,
-    * bit 5 (from left) = 2^(8-5) = 8 = 0x08 :
-    *   false = u and v components are relative to east, north
-    *   true = u and v components are relative to  grid x,y direction (i,j)
-    *
-    * @return true/false
- 	*/
-   public abstract boolean isUVEastNorth();
+    /**
+     * Get a string representation of this GDS.
+     *
+     * @return string representation of this GDS
+     * @see java.lang.Object#toString()
+     */
+    public abstract String toString();
 
-   /**
-    * Overrides Object.hashCode() to be used in hashTables
-    * 
-    * @see java.lang.Object#hashCode()
-    */   
-   public abstract int hashCode();
-   
-   /**
-    * Overrides Object.equals() - perfect for testing
-    * @see java.lang.Object#equals(java.lang.Object)
-    */
-   public abstract boolean equals(Object obj);
+    /**
+     * NOTE: This method must remain here, so we don't
+     * break backward compability - thus this method
+     * does not make any sence if the grid type isn't
+     * standard lat/lon or rotated lat/lon
+     * <p>
+     * Get y-coordinate/latitude of grid end point.
+     *
+     * @return y-coordinate/latitude of grid end point
+     */
+    public double getGridLat2()
+    {
+        return this.grid_lat2;
+    }
 
-   /**
-    * rdg - added this method to be used in a comparator for sorting while
-    *       extracting records.
-    * Not currently used in the JGrib library, but is used in a library I'm
-    *    using that uses JGrib.
-    * @param gds - GribRecordGDS
-    * @return - -1 if gds is "less than" this, 0 if equal, 1 if gds is "greater than" this.
-    * 
-    * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-    */
-   	public abstract int compare(Grib1RecordGDS gds);
+    /**
+     * NOTE: This method must remain here, so we don't
+     * break backward compability - thus this method
+     * does not make any sence if the grid type isn't
+     * standard lat/lon or rotated lat/lon
+     * <p>
+     * Get x-coordinate/longitude of grid end point.
+     *
+     * @return x-coordinate/longitude of grid end point
+     */
+    public double getGridLon2()
+    {
+        return this.grid_lon2;
+    }
 
-   /**
-    * Get a string representation of this GDS.
-    *
-    * @return string representation of this GDS
-    * @see java.lang.Object#toString()
-    */
-   public abstract String toString();
-      
-   /**
-    * NOTE: This method must remain here, so we don't 
-    * break backward compability - thus this method
-    * does not make any sence if the grid type isn't
-    * standard lat/lon or rotated lat/lon
-    * 
-    * Get y-coordinate/latitude of grid end point.
-    *
-    * @return y-coordinate/latitude of grid end point
-    */
-   public double getGridLat2()
-   {
-      return this.grid_lat2;
-   }
+    /**
+     * NOTE: This method must remain here, so we don't
+     * break backward compability - thus this method
+     * does not make any sence if the grid type isn't
+     * standard lat/lon or rotated lat/lon
+     * <p>
+     * Get y-coordinate/latitude of south pole of a rotated latitude/longitude grid.
+     *
+     * @return latitude of south pole
+     */
+    public double getGridLatSP()
+    {
+        return this.grid_latsp;
+    }
 
+    /**
+     * NOTE: This method must remain here, so we don't
+     * break backward compability - thus this method
+     * does not make any sence if the grid type isn't
+     * standard lat/lon or rotated lat/lon
+     * <p>
+     * Get x-coordinate/longitude of south pole of a rotated latitude/longitude grid.
+     *
+     * @return longitude of south pole
+     */
+    public double getGridLonSP()
+    {
+        return this.grid_lonsp;
+    }
 
-   /**
-    * NOTE: This method must remain here, so we don't 
-    * break backward compability - thus this method
-    * does not make any sence if the grid type isn't
-    * standard lat/lon or rotated lat/lon
-    * 
-    * Get x-coordinate/longitude of grid end point.
-    *
-    * @return x-coordinate/longitude of grid end point
-    */
-   public double getGridLon2()
-   {
-      return this.grid_lon2;
-   }
-
-   /**
-    * NOTE: This method must remain here, so we don't 
-    * break backward compability - thus this method
-    * does not make any sence if the grid type isn't
-    * standard lat/lon or rotated lat/lon
-    * 
-    * Get y-coordinate/latitude of south pole of a rotated latitude/longitude grid.
-    *
-    * @return latitude of south pole
-    */
-   public double getGridLatSP()
-   {
-      return this.grid_latsp;
-   }
-
-
-   /**
-    * NOTE: This method must remain here, so we don't 
-    * break backward compability - thus this method
-    * does not make any sence if the grid type isn't
-    * standard lat/lon or rotated lat/lon
-    * 
-    * Get x-coordinate/longitude of south pole of a rotated latitude/longitude grid.
-    *
-    * @return longitude of south pole
-    */
-   public double getGridLonSP()
-   {
-      return this.grid_lonsp;
-   }
-
-
-   /**
-    * NOTE: This method must remain here, so we don't 
-    * break backward compability - thus this method
-    * does not make any sence if the grid type isn't
-    * standard lat/lon or rotated lat/lon
-    * 
-    * Get grid rotation angle of a rotated latitude/longitude grid.
-    *
-    * @return rotation angle
-    */
-   public double getGridRotAngle()
-   {
-      return this.grid_rotang;
-   }
-
+    /**
+     * NOTE: This method must remain here, so we don't
+     * break backward compability - thus this method
+     * does not make any sence if the grid type isn't
+     * standard lat/lon or rotated lat/lon
+     * <p>
+     * Get grid rotation angle of a rotated latitude/longitude grid.
+     *
+     * @return rotation angle
+     */
+    public double getGridRotAngle()
+    {
+        return this.grid_rotang;
+    }
 }
 
 

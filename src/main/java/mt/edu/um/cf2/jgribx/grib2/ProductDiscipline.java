@@ -1,6 +1,9 @@
 package mt.edu.um.cf2.jgribx.grib2;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ProductDiscipline
 {
@@ -10,7 +13,8 @@ public class ProductDiscipline
 
     private static final Map<Integer, String> entries = new HashMap<>();
 
-    static {
+    static
+    {
         entries.put(0, "METEOROLOGICAL");
         entries.put(1, "HYDROLOGICAL");
         entries.put(2, "LAND_SURFACE");

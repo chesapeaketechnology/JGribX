@@ -4,24 +4,24 @@
  * ============================================================================
  * Written by Andrew Spiteri <andrew.spiteri@um.edu.mt>
  * Adapted from JGRIB
- * 
+ *
  * Licensed under MIT (https://github.com/spidru/JGribX/blob/master/LICENSE)
  * ============================================================================
  */
 package mt.edu.um.cf2.jgribx.grib1;
 
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
 import mt.edu.um.cf2.jgribx.Bytes2Number;
 import mt.edu.um.cf2.jgribx.GribInputStream;
 import mt.edu.um.cf2.jgribx.Logger;
 import mt.edu.um.cf2.jgribx.NotSupportedException;
 
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
+
 /**
  * A class representing the product definition section (PDS) of a GRIB record.
- *
  */
 public class Grib1RecordPDS
 {
@@ -63,7 +63,6 @@ public class Grib1RecordPDS
 
     /**
      * Model Run/Analysis/Reference time.
-     *
      */
     protected Calendar baseTime;
 
@@ -92,117 +91,116 @@ public class Grib1RecordPDS
     /**
      * Parameter Table Version number, currently 3 for international exchange.
      */
-    private int tableVersion;
+    private final int tableVersion;
 
     /**
      * Identification of center e.g. 88 for Oslo
      */
-    private int centreId;
+    private final int centreId;
 
     /**
      * Identification of subcenter
      */
-    private int subcentreId;
+    private final int subcentreId;
 
     /**
-     * Identification of Generating Process (i.e. the numerical model that 
+     * Identification of Generating Process (i.e. the numerical model that
      * created the data).
      */
-    private int processId;
+    private final int processId;
 
     /**
      * rdg - moved the Parameter table information and functionality into a
      * class. See GribPDSParamTable class for details.
      */
     private GribPDSParamTable parameter_table;
-        
+
     /**
-     * Constructs a {@link GribRecordPDS} object from a bit input stream.
+     * Constructs a {@link Grib1RecordPDS} object from a bit input stream.
      *
      * @param in bit input stream with PDS content
-     *
-     * @throws IOException if stream can not be opened etc.
+     * @throws IOException           if stream can not be opened etc.
      * @throws NotSupportedException
      */
     public Grib1RecordPDS(GribInputStream in) throws NotSupportedException, IOException
     {
         int offset = 0;
         int offset2 = 0;
-        
+
         // All defined times are in UTC
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 
         /* [1-3] Section Length */
         length = in.readUINT(3);
-        
+
         /* [4] Table Version */
         tableVersion = in.readUINT(1);
-        
+
         /* [5] Originating Centre ID */
         centreId = in.readUINT(1);
-        
+
         /* [6] Generating Process */
         processId = in.readUINT(1);
-        
+
         /* [7] Grid Definition */
         gridId = in.readUINT(1);
-        
+
         /* [8] Flag (Presence of PDS and GDS) */
         int flag = in.readUINT(1);
         gdsExists = (flag & 128) == 128;
         bmsExists = (flag & 64) == 64;
-        
+
         /* [9] Parameter Indicator */
         int parameterId = in.readUINT(1);
-        
+
         /* [10] Level Type */
         int levelType = in.readUINT(1);
-        
+
         /* [11-12] Level Data (height, pressure, etc.) */
         int levelData = in.readUINT(2);
-        
+
         /* [13] Year of Century */
         int centuryYear = in.readUINT(1);
-        
+
         /* [14] Month */
         int month = in.readUINT(1);
-        
+
         /* [15] Day */
         int day = in.readUINT(1);
-        
+
         /* [16] Hour */
         int hour = in.readUINT(1);
-        
+
         /* [17] Minute */
         int minute = in.readUINT(1);
-        
+
         /* [18] Time Unit */
         int timeUnit = in.readUINT(1);
-        
+
         /* [19] Time Period P1 (time units) */
         int p1 = in.readUINT(1);
-        
+
         /* [20] Time Period P2 (time units) */
         int p2 = in.readUINT(1);
-        
+
         /* [21] Time Range */
         int timeRangeId = in.readUINT(1);
-        
+
         /* [22-23] Number included in average */
         int number = in.readUINT(2);
-        
+
         /* Number missing from averages */
         int numberMissing = in.readUINT(1);
-        
+
         /* [25] Reference Time Century */
         int century = in.readUINT(1);
-        
+
         /* [26] Originating Sub-centre ID */
         subcentreId = in.readUINT(1);
-        
+
         /* [27-28] Decimal Scale Factor */
         decscale = in.readINT(2, Bytes2Number.INT_SM);
-        
+
         /*********************************************************************/
         /* Data Processing */
 
@@ -213,10 +211,10 @@ public class Grib1RecordPDS
         }
         parameter = Grib1Parameter.getParameter(tableVersion, parameterId, centreId);
         if (parameter == null)
-            throw new NotSupportedException("Unsupported Parameter "+ parameterId + " in Table " + tableVersion);
+        {
+            throw new NotSupportedException("Unsupported Parameter " + parameterId + " in Table " + tableVersion);
+        }
 
-        /* Level */
-//      this.level = GribTables.getLevel(data[6], data[7], data[8]);
         level = Grib1Level.getLevel(levelType, levelData);
 
         // octets 13-17 (base time of forecast in UTC)
@@ -229,7 +227,8 @@ public class Grib1RecordPDS
         /* changes x3/x6/x12 to hours */
         // rdg - changed indices to match indices used here
         // octet 18
-        switch (timeUnit) {
+        switch (timeUnit)
+        {
             case 10: //3 hours
                 p1 *= 3;
                 p2 *= 3;
@@ -249,7 +248,8 @@ public class Grib1RecordPDS
         /* RDG - end of code added 4 Aug 02 */
 
         // octet 21 (time range indicator)
-        switch (timeRangeId) {
+        switch (timeRangeId)
+        {
             case 0:
                 offset = p1;
                 offset2 = 0;
@@ -316,7 +316,8 @@ public class Grib1RecordPDS
         int year2 = centuryYear;
 
         // octet 18 (again) - this time adding offset to get forecast/valid time
-        switch (timeUnit) {
+        switch (timeUnit)
+        {
             case 0:
                 minute1 += offset;
                 minute2 += offset2;
@@ -352,9 +353,11 @@ public class Grib1RecordPDS
 
     /**
      * Get the byte length of this section.
+     *
      * @return length in bytes of this section
      */
-    public int getLength() {
+    public int getLength()
+    {
 
         return length;
     }
@@ -364,7 +367,8 @@ public class Grib1RecordPDS
      *
      * @return true, if GDS exists
      */
-    public boolean gdsExists() {
+    public boolean gdsExists()
+    {
 
         return this.gdsExists;
     }
@@ -374,7 +378,8 @@ public class Grib1RecordPDS
      *
      * @return true, if BMS exists
      */
-    public boolean bmsExists() {
+    public boolean bmsExists()
+    {
 
         return this.bmsExists;
     }
@@ -384,7 +389,8 @@ public class Grib1RecordPDS
      *
      * @return exponent of decimal scale
      */
-    public int getDecimalScale() {
+    public int getDecimalScale()
+    {
 
         return this.decscale;
     }
@@ -394,9 +400,12 @@ public class Grib1RecordPDS
      *
      * @return type of parameter
      */
-    public String getParameterAbbreviation() {
+    public String getParameterAbbreviation()
+    {
         if (parameter == null)
+        {
             return null;
+        }
         return parameter.getAbbreviation();
     }
 
@@ -408,9 +417,12 @@ public class Grib1RecordPDS
     public String getParameterDescription()
     {
         if (parameter == null)
+        {
             return "";
-        else
+        } else
+        {
             return this.parameter.getDescription();
+        }
     }
 
     /**
@@ -418,7 +430,8 @@ public class Grib1RecordPDS
      *
      * @return name of the unit of the parameter
      */
-    public String getParameterUnits() {
+    public String getParameterUnits()
+    {
 
         return this.parameter.getUnits();
     }
@@ -436,13 +449,14 @@ public class Grib1RecordPDS
 // rdg - added the following getters for level information though they are
 //       just convenience methods.  You could do the same by getting the
 //       GribPDSLevel (with getPDSLevel) then calling its methods directly
+
     /**
      * Get the name for the type of level for this forecast/analysis.
      *
-     *
      * @return name of level (height or pressure)
      */
-    public String getLevelName() {
+    public String getLevelName()
+    {
         return this.level.getName();
     }
 
@@ -451,7 +465,8 @@ public class Grib1RecordPDS
      *
      * @return name of level (height or pressure)
      */
-    public String getLevelDesc() {
+    public String getLevelDesc()
+    {
         return this.level.getDescription();
     }
 
@@ -460,7 +475,8 @@ public class Grib1RecordPDS
      *
      * @return name of level (height or pressure)
      */
-    public String getLevelUnits() {
+    public String getLevelUnits()
+    {
         return this.level.getUnits();
     }
 
@@ -469,7 +485,8 @@ public class Grib1RecordPDS
      *
      * @return name of level (height or pressure)
      */
-    public float getLevelValue() {
+    public float getLevelValue()
+    {
         return this.level.getValue1();
     }
 
@@ -478,7 +495,8 @@ public class Grib1RecordPDS
      *
      * @return name of level (height or pressure)
      */
-    public float getLevelValue2() {
+    public float getLevelValue2()
+    {
         return this.level.getValue2();
     }
 
@@ -487,39 +505,40 @@ public class Grib1RecordPDS
      *
      * @return name of level (height or pressure)
      */
-    public Grib1Level getPDSLevel() {
+    public Grib1Level getPDSLevel()
+    {
         return this.level;
     }
 
     /**
-     *
      * @return the ID of the originating centre
      */
-    public int getCentreId() {
+    public int getCentreId()
+    {
         return centreId;
     }
 
     /**
-     *
      * @return subcenter_id
      */
-    public int getSubcenterId() {
+    public int getSubcenterId()
+    {
         return subcentreId;
     }
 
     /**
-     *
      * @return table version
      */
-    public int getTableVersion() {
+    public int getTableVersion()
+    {
         return tableVersion;
     }
 
     /**
-     *
      * @return process_id
      */
-    public int getProcessId() {
+    public int getProcessId()
+    {
         return processId;
     }
 
@@ -529,7 +548,8 @@ public class Grib1RecordPDS
      * @return GribPDSParamTable containing parameter table that defined this
      * parameter
      */
-    public GribPDSParamTable getParamTable() {
+    public GribPDSParamTable getParamTable()
+    {
         return this.parameter_table;
     }
 
@@ -548,7 +568,8 @@ public class Grib1RecordPDS
      *
      * @return date and time
      */
-    public Calendar getLocalForecastTime() {
+    public Calendar getLocalForecastTime()
+    {
         return this.forecastTime;
     }
 
@@ -557,7 +578,8 @@ public class Grib1RecordPDS
      *
      * @return date and time
      */
-    public Grib1Parameter getParameter() {
+    public Grib1Parameter getParameter()
+    {
         return this.parameter;
     }
 
@@ -566,8 +588,8 @@ public class Grib1RecordPDS
      *
      * @return date and time
      */
-    public Calendar getGMTBaseTime() {
-
+    public Calendar getGMTBaseTime()
+    {
         Calendar gmtTime = (Calendar) baseTime.clone();
         // hopefully this DST offset adjusts to DST automatically
         int dstOffset = gmtTime.get(Calendar.DST_OFFSET) / 3600000;
@@ -586,7 +608,8 @@ public class Grib1RecordPDS
      *
      * @return date and time
      */
-    public Calendar getGMTForecastTime() {
+    public Calendar getGMTForecastTime()
+    {
         Calendar gmtTime = (Calendar) forecastTime.clone();
         Logger.println("forecast time = " + gmtTime.getTime(), Logger.DEBUG);
         // hopefully this DST offset adjusts to DST automatically
@@ -605,7 +628,8 @@ public class Grib1RecordPDS
      * @return string representation of this PDS
      */
     @Override
-    public String toString() {
+    public String toString()
+    {
         return headerToString()
                 + "        Type: " + this.getParameterAbbreviation() + "\n"
                 + "        Description: " + this.getParameterDescription() + "\n"
@@ -623,7 +647,8 @@ public class Grib1RecordPDS
      *
      * @return string representation of the Header for this PDS
      */
-    public String headerToString() {
+    public String headerToString()
+    {
         String time1 = this.forecastTime.get(Calendar.DAY_OF_MONTH) + "."
                 + (this.forecastTime.get(Calendar.MONTH) + 1) + "."
                 + this.forecastTime.get(Calendar.YEAR) + "  "
@@ -635,9 +660,11 @@ public class Grib1RecordPDS
                 + this.forecastTime.get(Calendar.HOUR_OF_DAY) + ":"
                 + this.forecastTime.get(Calendar.MINUTE);
         String timeStr;
-        if (timeRange == null) {
+        if (timeRange == null)
+        {
             timeStr = "time: " + time1;
-        } else {
+        } else
+        {
             timeStr = timeRange + time1 + connector + time2;
         }
 
@@ -657,50 +684,57 @@ public class Grib1RecordPDS
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Grib1RecordPDS)) {
+    public boolean equals(Object obj)
+    {
+        if (!(obj instanceof Grib1RecordPDS))
+        {
             return false;
         }
-        if (this == obj) {
+        if (this == obj)
+        {
             // Same object
             return true;
         }
         Grib1RecordPDS pds = (Grib1RecordPDS) obj;
 
-        if (gridId != pds.gridId) {
+        if (gridId != pds.gridId)
+        {
             return false;
         }
-        if (baseTime != pds.baseTime) {
+        if (baseTime != pds.baseTime)
+        {
             return false;
         }
-        if (forecastTime != pds.forecastTime) {
+        if (forecastTime != pds.forecastTime)
+        {
             return false;
         }
-        if (centreId != pds.centreId) {
+        if (centreId != pds.centreId)
+        {
             return false;
         }
-        if (subcentreId != pds.subcentreId) {
+        if (subcentreId != pds.subcentreId)
+        {
             return false;
         }
-        if (tableVersion != pds.tableVersion) {
+        if (tableVersion != pds.tableVersion)
+        {
             return false;
         }
-        if (decscale != pds.decscale) {
+        if (decscale != pds.decscale)
+        {
             return false;
         }
-        if (length != pds.length) {
+        if (length != pds.length)
+        {
             return false;
         }
 
-        if (!(parameter.equals(pds.getParameter()))) {
+        if (!(parameter.equals(pds.getParameter())))
+        {
             return false;
         }
-        if (!(level.equals(pds.getPDSLevel()))) {
-            return false;
-        }
-
-        return true;
-
+        return level.equals(pds.getPDSLevel());
     }
 
     /**
@@ -713,57 +747,68 @@ public class Grib1RecordPDS
      * @param pds - GribRecordPDS object
      * @return - -1 if pds is "less than" this, 0 if equal, 1 if pds is "greater
      * than" this.
-     *
      */
-    public int compare(Grib1RecordPDS pds) {
+    public int compare(Grib1RecordPDS pds)
+    {
 
         int check;
 
-        if (this.equals(pds)) {
+        if (this.equals(pds))
+        {
             return 0;
         }
 
         // not equal, so either less than or greater than.
         // check if pds is less; if not, then pds is greater
-        if (gridId > pds.gridId) {
+        if (gridId > pds.gridId)
+        {
             return -1;
         }
-        if (baseTime.getTime().getTime() > pds.baseTime.getTime().getTime()) {
+        if (baseTime.getTime().getTime() > pds.baseTime.getTime().getTime())
+        {
             return -1;
         }
-        if (forecastTime.getTime().getTime() > pds.forecastTime.getTime().getTime()) {
+        if (forecastTime.getTime().getTime() > pds.forecastTime.getTime().getTime())
+        {
             return -1;
         }
-        if (forecastTime2.getTime().getTime() > pds.forecastTime2.getTime().getTime()) {
+        if (forecastTime2.getTime().getTime() > pds.forecastTime2.getTime().getTime())
+        {
             return -1;
         }
-        if (centreId > pds.centreId) {
+        if (centreId > pds.centreId)
+        {
             return -1;
         }
-        if (subcentreId > pds.subcentreId) {
+        if (subcentreId > pds.subcentreId)
+        {
             return -1;
         }
-        if (tableVersion > pds.tableVersion) {
+        if (tableVersion > pds.tableVersion)
+        {
             return -1;
         }
-        if (decscale > pds.decscale) {
+        if (decscale > pds.decscale)
+        {
             return -1;
         }
-        if (length > pds.length) {
+        if (length > pds.length)
+        {
             return -1;
         }
 
         check = parameter.compare(pds.getParameter());
-        if (check < 0) {
+        if (check < 0)
+        {
             return -1;
         }
         check = level.compare(pds.getPDSLevel());
-        if (check < 0) {
+        if (check < 0)
+        {
             return -1;
         }
 
         // if here, then something must be greater than something else - doesn't matter what
         return 1;
     }
-
 }
