@@ -1,0 +1,7 @@
+ext {
+    apacheCommonsVersion = '3.0'
+    commonsVersion = '1.4'
+    jj2000Version = '5.2'
+    junitVersion = '4.13.1'
+    slf4jVersion = '1.7.25'
+}

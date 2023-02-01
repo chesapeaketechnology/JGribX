@@ -14,6 +14,8 @@ plugins {
 version = '0.6.0-SNAPSHOT'
 group 'mt.edu.um.cf2'
 
+apply from: "gradle/versions.gradle"
+
 // In this section you declare where to find the dependencies of your project
 repositories {
     mavenCentral()
@@ -40,15 +42,18 @@ test {
     }
 }
 
+wrapper {
+    gradleVersion = '7.3.3'
+}
+
+
 configurations {
     extraLibs
     runtime
     ajc
     aspects
-    expandedJars.transitive = false
     api {
         extendsFrom(aspects)
-        extendsFrom(expandedJars)
     }
     testArtifacts.extendsFrom testRuntime
     offlinePluginDependency.extendsFrom(compileOnly)
@@ -58,10 +63,9 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from {
         // Expand all the project jars into the main jar so Raptor can find the CDI annotations
-        (configurations.expandedJars).collect { zipTree(it) }
+        (configurations.extraLibs).collect { it.isDirectory() ? it : zipTree(it) }
     }
     into('lib') {
-        from((configurations.runtimeClasspath - configurations.offlinePluginDependency) - configurations.expandedJars)
         exclude 'log4j*'
         exclude 'slf4j*'
     }
@@ -74,17 +78,17 @@ jar {
 // In this section you declare the dependencies for your production and test code
 dependencies {
     extraLibs(
-            [group: 'commons-cli', name: 'commons-cli', version: '1.4'],
-            ['org.slf4j:slf4j-api:1.7.25'],
-            ['edu.ucar:jj2000:5.2']
+            [group: 'commons-cli', name: 'commons-cli', version: commonsVersion],
+            [group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion],
+            [group: 'edu.ucar', name: 'jj2000', version: jj2000Version]
     )
     configurations.implementation.extendsFrom(configurations.extraLibs)
 
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
-    
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: apacheCommonsVersion
+
     // Declare the dependency for your favourite test framework you want to use in your tests.
     // TestNG is also supported by the Gradle Test task. Just change the
     // testCompile dependency to testCompile 'org.testng:testng:6.8.1' and add
     // 'test.useTestNG()' to your build script.
-    testImplementation 'junit:junit:4.13.1'
+    testImplementation group: 'junit', name: 'junit', version: junitVersion
 }
