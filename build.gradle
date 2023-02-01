@@ -1,5 +1,3 @@
-import org.gradle.api.file.DuplicatesStrategy
-
 /*
  * Gradle build file for JGribX
  *
@@ -11,17 +9,14 @@ import org.gradle.api.file.DuplicatesStrategy
 plugins {
     id "java"
     id "maven-publish"
-    id "eclipse"
 }
 
-version = 0.1
+version = '0.6.0-SNAPSHOT'
 group 'mt.edu.um.cf2'
 
 // In this section you declare where to find the dependencies of your project
 repositories {
-    // Use 'jcenter' for resolving your dependencies.
-    // You can declare any Maven/Ivy/file repository here.
-    jcenter()
+    mavenCentral()
 }
 
 publishing {
@@ -39,19 +34,6 @@ publishing {
     }
 }
 
-sourceSets {
-    main {
-        resources.srcDirs = ["src/main/java", "src/main/resources"]
-    }
-    test {
-        resources.srcDirs = ["src/test/java", "src/test/resources"]
-    }
-}
-
-configurations {
-    extraLibs
-}
-
 test {
     testLogging {
         events 'started', 'passed'
@@ -59,6 +41,7 @@ test {
 }
 
 configurations {
+    extraLibs
     runtime
     ajc
     aspects
@@ -98,8 +81,7 @@ dependencies {
     configurations.implementation.extendsFrom(configurations.extraLibs)
 
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
-
-
+    
     // Declare the dependency for your favourite test framework you want to use in your tests.
     // TestNG is also supported by the Gradle Test task. Just change the
     // testCompile dependency to testCompile 'org.testng:testng:6.8.1' and add
