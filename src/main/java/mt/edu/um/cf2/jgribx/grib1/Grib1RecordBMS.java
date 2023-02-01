@@ -83,7 +83,6 @@ public class Grib1RecordBMS
      */
     public int getLength()
     {
-
         return this.length;
     }
 
@@ -94,7 +93,6 @@ public class Grib1RecordBMS
      */
     public boolean[] getBitmap()
     {
-
         return this.bitmap;
     }
 
@@ -106,11 +104,7 @@ public class Grib1RecordBMS
     @Override
     public String toString()
     {
-
         return "    BMS section:" + '\n' +
                 "        bitmap length: " + this.bitmap.length;
     }
 }
-
-
-
